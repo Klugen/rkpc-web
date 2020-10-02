@@ -82,7 +82,7 @@ export const constantRoutes = [
         meta: { title: '总览', icon: 'dashboard', affix: true }
       }
     ]
-  }
+  },
 
   // {
   //   path: '/documentation',
@@ -109,20 +109,34 @@ export const constantRoutes = [
   //     }
   //   ]
   // },
-  // {
-  //   path: '/profile',
-  //   component: Layout,
-  //   redirect: '/profile/index',
-  //   hidden: true,
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       component: () => import('@/views/profile/index'),
-  //       name: 'Profile',
-  //       meta: { title: 'Profile', icon: 'user', noCache: true }
-  //     }
-  //   ]
-  // }
+  {
+    path: '/EditPassword',
+    component: Layout,
+    redirect: '/EditPassword/index',
+    hidden: true,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/EditPassword/index'),
+        name: 'Profile',
+        meta: { title: '修改密码', icon: 'user', noCache: true }
+      }
+    ]
+  },
+  {
+    path: '/profile',
+    component: Layout,
+    redirect: '/profile/index',
+    hidden: true,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/profile/index'),
+        name: 'Profile',
+        meta: { title: 'Profile', icon: 'user', noCache: true }
+      }
+    ]
+  }
 ]
 
 /**
@@ -169,18 +183,18 @@ export const asyncRoutes = [
     ]
   },
 
-  // {
-  //   path: '/icon',
-  //   component: Layout,
-  //   children: [
-  //     {
-  //       path: 'index',
-  //       component: () => import('@/views/icons/index'),
-  //       name: 'Icons',
-  //       meta: { title: 'Icons', icon: 'icon', noCache: true }
-  //     }
-  //   ]
-  // },
+  {
+    path: '/icon',
+    component: Layout,
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/icons/index'),
+        name: 'Icons',
+        meta: { title: 'Icons', icon: 'icon', noCache: true }
+      }
+    ]
+  },
 
   /** when your routing map is too long, you can split it into small modules **/
   // componentsRouter,

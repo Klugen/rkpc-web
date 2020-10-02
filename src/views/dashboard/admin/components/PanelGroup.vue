@@ -1,57 +1,60 @@
 <template>
-  <el-row :gutter="40" class="panel-group">
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+  <el-row :gutter="24" class="panel-group">
+    <el-col :xs="12" :sm="12" :lg="8" class="card-panel-col">
       <div class="card-panel" @click="handleSetLineChartData('newVisitis')">
         <div class="card-panel-icon-wrapper icon-people">
-          <svg-icon icon-class="peoples" class-name="card-panel-icon" />
+          <!-- <svg-icon icon-class="peoples" class-name="card-panel-icon" /> -->
+          <i class="el-icon-s-home card-panel-icon" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            New Visits
+            采集户数
           </div>
           <count-to :start-val="0" :end-val="102400" :duration="2600" class="card-panel-num" />
         </div>
       </div>
     </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+    <el-col :xs="12" :sm="12" :lg="8" class="card-panel-col">
       <div class="card-panel" @click="handleSetLineChartData('messages')">
         <div class="card-panel-icon-wrapper icon-message">
-          <svg-icon icon-class="message" class-name="card-panel-icon" />
+          <!-- <svg-icon icon-class="message" class-name="card-panel-icon" /> -->
+          <i class="el-icon-s-custom card-panel-icon" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            Messages
+            采集人数
           </div>
           <count-to :start-val="0" :end-val="81212" :duration="3000" class="card-panel-num" />
         </div>
       </div>
     </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+    <el-col :xs="12" :sm="12" :lg="8" class="card-panel-col">
       <div class="card-panel" @click="handleSetLineChartData('purchases')">
         <div class="card-panel-icon-wrapper icon-money">
-          <svg-icon icon-class="money" class-name="card-panel-icon" />
+          <!-- <svg-icon icon-class="money" class-name="card-panel-icon" /> -->
+          <i class="el-icon-s-order card-panel-icon" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            Purchases
+            今日提交
           </div>
           <count-to :start-val="0" :end-val="9280" :duration="3200" class="card-panel-num" />
         </div>
       </div>
     </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+    <!-- <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel" @click="handleSetLineChartData('shoppings')">
         <div class="card-panel-icon-wrapper icon-shopping">
-          <svg-icon icon-class="shopping" class-name="card-panel-icon" />
+          <i class="el-icon-s-flag card-panel-icon" class-name="card-panel-icon" />
         </div>
         <div class="card-panel-description">
           <div class="card-panel-text">
-            Shoppings
+            提交社区
           </div>
           <count-to :start-val="0" :end-val="13600" :duration="3600" class="card-panel-num" />
         </div>
       </div>
-    </el-col>
+    </el-col> -->
   </el-row>
 </template>
 
@@ -62,9 +65,13 @@ export default {
   components: {
     CountTo
   },
+  created() {
+    console.log('Dashboard/admin/PanelGoup', 'XXXXX')
+  },
   methods: {
     handleSetLineChartData(type) {
-      this.$emit('handleSetLineChartData', type)
+      console.log('tag ', type)
+      // this.$emit('handleSetLineChartData', type)
     }
   }
 }
@@ -73,15 +80,14 @@ export default {
 <style lang="scss" scoped>
 .panel-group {
   margin-top: 18px;
-
   .card-panel-col {
     margin-bottom: 32px;
   }
 
   .card-panel {
-    height: 108px;
+    height: 150px;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 16px;
     position: relative;
     overflow: hidden;
     color: #666;
@@ -137,24 +143,24 @@ export default {
 
     .card-panel-icon {
       float: left;
-      font-size: 48px;
+      font-size: 96px;
     }
 
     .card-panel-description {
       float: right;
       font-weight: bold;
-      margin: 26px;
+      margin: 45px;
       margin-left: 0px;
 
       .card-panel-text {
         line-height: 18px;
         color: rgba(0, 0, 0, 0.45);
-        font-size: 16px;
+        font-size: 24px;
         margin-bottom: 12px;
       }
 
       .card-panel-num {
-        font-size: 20px;
+        font-size: 32px;
       }
     }
   }
