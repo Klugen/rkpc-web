@@ -192,7 +192,7 @@
           <span>0</span>
         </template>
       </el-table-column>
-      <el-table-column label="联系方式" width="150px" align="center">
+      <el-table-column label="联系方式" width="130px" align="center">
         <template>
           <!-- <span>{{ row.timestamp | parseTime("{y}-{m}-{d} {h}:{i}") }}</span> -->
           <span>18633566778</span>
