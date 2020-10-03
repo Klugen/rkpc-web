@@ -91,13 +91,13 @@ export default {
   components: {
     // GithubCorner,
     PanelGroup,
-    LineChart,
-    RaddarChart,
-    PieChart,
+    //LineChart,
+    //RaddarChart,
+    //PieChart,
     BarChart,
-    TransactionTable,
-    TodoList,
-    BoxCard
+    TransactionTable
+    //TodoList,
+    //BoxCard
   },
   data() {
     return {
