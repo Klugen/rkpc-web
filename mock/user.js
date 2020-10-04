@@ -45,7 +45,6 @@ module.exports = [
     url: '/vue-element-admin/user/login',
     type: 'post',
     response: config => {
-      console.log('XXX', config)
       const { username, password } = config.body
       if (username === 'jining' && password === '123456') {
         return {

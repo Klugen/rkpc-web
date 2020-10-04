@@ -9,7 +9,9 @@ const service = axios.create({
   // withCredentials: true, // send cookies when cross-domain requests
   timeout: 5000 // request timeout
 })
+console.log(process.env.VUE_APP_BASE_API)
 
+ 
 // request interceptor
 service.interceptors.request.use(
   config => {
@@ -44,8 +46,7 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data
-    console.log('request.js', response)
-    console.log('request.js', res)
+    //console.log("9999999999999999999",res)
     if (res.code !== 0 && res.code !== 20000) {
       Message({
         message: res.message || '服务器错误',
@@ -72,7 +73,7 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log('err' + error) // for debug
+    console.log(error) // for debug
     Message({
       message: error.message,
       type: 'error',

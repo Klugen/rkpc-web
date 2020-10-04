@@ -4,13 +4,19 @@
       <div class="card-panel" @click="handleSetLineChartData('newVisitis')">
         <div class="card-panel-icon-wrapper icon-people">
           <!-- <svg-icon icon-class="peoples" class-name="card-panel-icon" /> -->
-          <i class="el-icon-s-home card-panel-icon" class-name="card-panel-icon" />
+          <i
+            class="el-icon-s-home card-panel-icon"
+            class-name="card-panel-icon"
+          />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">
-            采集户数
-          </div>
-          <count-to :start-val="0" :end-val="102400" :duration="2600" class="card-panel-num" />
+          <div class="card-panel-text">采集户数</div>
+          <count-to
+            :start-val="ch"
+            :end-val="h"
+            :duration="2600"
+            class="card-panel-num"
+          />
         </div>
       </div>
     </el-col>
@@ -18,13 +24,19 @@
       <div class="card-panel" @click="handleSetLineChartData('messages')">
         <div class="card-panel-icon-wrapper icon-message">
           <!-- <svg-icon icon-class="message" class-name="card-panel-icon" /> -->
-          <i class="el-icon-s-custom card-panel-icon" class-name="card-panel-icon" />
+          <i
+            class="el-icon-s-custom card-panel-icon"
+            class-name="card-panel-icon"
+          />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">
-            采集人数
-          </div>
-          <count-to :start-val="0" :end-val="81212" :duration="3000" class="card-panel-num" />
+          <div class="card-panel-text">采集人数</div>
+          <count-to
+            :start-val="cp"
+            :end-val="p"
+            :duration="3000"
+            class="card-panel-num"
+          />
         </div>
       </div>
     </el-col>
@@ -32,13 +44,19 @@
       <div class="card-panel" @click="handleSetLineChartData('purchases')">
         <div class="card-panel-icon-wrapper icon-money">
           <!-- <svg-icon icon-class="money" class-name="card-panel-icon" /> -->
-          <i class="el-icon-s-order card-panel-icon" class-name="card-panel-icon" />
+          <i
+            class="el-icon-s-order card-panel-icon"
+            class-name="card-panel-icon"
+          />
         </div>
         <div class="card-panel-description">
-          <div class="card-panel-text">
-            今日提交
-          </div>
-          <count-to :start-val="0" :end-val="9280" :duration="3200" class="card-panel-num" />
+          <div class="card-panel-text">今日提交</div>
+          <count-to
+            :start-val="ct"
+            :end-val="t"
+            :duration="3200"
+            class="card-panel-num"
+          />
         </div>
       </div>
     </el-col>
@@ -59,22 +77,68 @@
 </template>
 
 <script>
-import CountTo from 'vue-count-to'
-
+import CountTo from "vue-count-to";
+import { initDataBoardData } from "@/api/dashboard";
+import request from "@/utils/request";
 export default {
   components: {
-    CountTo
+    CountTo,
+  },
+
+  mounted() {
+    if (this.timer) {
+      clearInterval(this.timer);
+    } else {
+      this.timer = setInterval(() => {
+         console.log("定时器启动");
+        this.$data.ch = this.$data.h;
+        this.$data.cp = this.$data.p;
+        this.$data.ct = this.$data.t;
+        this.loadData();
+      }, 60000);
+    }
   },
   created() {
-    console.log('Dashboard/admin/PanelGoup', 'XXXXX')
+    this.loadData();
+  },
+  destroyed() {
+    clearTimeout(this.timer);
+  },
+  watch: {
+    
+  },
+  data() {
+    return {
+      h: 100,
+      p: 1000,
+      t: 20,
+      ch: 0,
+      cp: 0,
+      ct: 0,
+    };
   },
   methods: {
+    loadData() {
+      initDataBoardData().then((response) => {
+        this.$data.h = response.data.familyCount;
+        this.$data.p = response.data.peopleCount;
+        this.$data.t = response.data.todayFamilyCount;
+      });
+    },
     handleSetLineChartData(type) {
-      console.log('tag ', type)
       // this.$emit('handleSetLineChartData', type)
-    }
-  }
-}
+    },
+    // timer() {
+    //   return setTimeout(() => {
+    //     console.log("定时器启动");
+    //     this.$data.ch = this.$data.h;
+    //     this.$data.cp = this.$data.p;
+    //     this.$data.ct = this.$data.t;
+    //     this.loadData();
+    //   }, 60000);
+    // },
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -92,8 +156,8 @@ export default {
     overflow: hidden;
     color: #666;
     background: #fff;
-    box-shadow: 4px 4px 40px rgba(0, 0, 0, .05);
-    border-color: rgba(0, 0, 0, .05);
+    box-shadow: 4px 4px 40px rgba(0, 0, 0, 0.05);
+    border-color: rgba(0, 0, 0, 0.05);
 
     &:hover {
       .card-panel-icon-wrapper {
@@ -113,7 +177,7 @@ export default {
       }
 
       .icon-shopping {
-        background: #34bfa3
+        background: #34bfa3;
       }
     }
 
@@ -130,7 +194,7 @@ export default {
     }
 
     .icon-shopping {
-      color: #34bfa3
+      color: #34bfa3;
     }
 
     .card-panel-icon-wrapper {
@@ -166,7 +230,7 @@ export default {
   }
 }
 
-@media (max-width:550px) {
+@media (max-width: 550px) {
   .card-panel-description {
     display: none;
   }

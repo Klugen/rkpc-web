@@ -6,7 +6,7 @@ function resolve(dir) {
   return path.join(__dirname, dir)
 }
 
-const name = defaultSettings.title || 'vue Element Admin' // page title
+const name = defaultSettings.title || '白塔户卡数据平台' // page title
 
 // If your port is set to 80,
 // use administrator privileges to execute the command line.
@@ -35,6 +35,28 @@ module.exports = {
     overlay: {
       warnings: false,
       errors: true
+    },
+    proxy: {
+      '/api': {
+        target: 'http://10.113.58.18:8080',
+        changOrigin: true ,
+        pathRewrite: {
+          '/api': '/' 
+          //pathRewrite: {'^/api': '/'} 重写之后url为 http://192.168.1.16:8085/xxxx
+          //pathRewrite: {'^/api': '/api'} 重写之后url为 http://192.168.1.16:8085/api/xxxx
+        },
+        onProxyReq: function(proxyReq, req, res, options) { // 由于vue中使用了body-parser 导致http中的body被序列化两次，从而使得配置代理后后端无法获取body中的数据
+          if (req.body) {
+            const reg = new RegExp('application/json')
+            if (reg.test(proxyReq.getHeader('Content-Type'))) {
+              const bodyData = JSON.stringify(req.body)
+              proxyReq.setHeader('Content-Length', Buffer.byteLength(bodyData))
+              // stream the content
+              proxyReq.write(bodyData)
+            }
+          }
+        }
+      }
     },
     before: require('./mock/mock-server.js')
   },
