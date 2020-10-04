@@ -41,9 +41,7 @@ module.exports = {
         target: 'http://10.113.58.18:8080',
         changOrigin: true ,
         pathRewrite: {
-          '/api': '/' 
-          //pathRewrite: {'^/api': '/'} 重写之后url为 http://192.168.1.16:8085/xxxx
-          //pathRewrite: {'^/api': '/api'} 重写之后url为 http://192.168.1.16:8085/api/xxxx
+          '/api': '/'
         },
         onProxyReq: function(proxyReq, req, res, options) { // 由于vue中使用了body-parser 导致http中的body被序列化两次，从而使得配置代理后后端无法获取body中的数据
           if (req.body) {

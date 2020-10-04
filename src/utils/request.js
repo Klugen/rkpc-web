@@ -6,7 +6,7 @@ import { getToken } from '@/utils/auth'
 // create an axios instance
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
-  // withCredentials: true, // send cookies when cross-domain requests
+  withCredentials: true, // send cookies when cross-domain requests
   timeout: 5000 // request timeout
 })
 console.log(process.env.VUE_APP_BASE_API)
@@ -46,7 +46,6 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data
-    //console.log("9999999999999999999",res)
     if (res.code !== 0 && res.code !== 20000) {
       Message({
         message: res.message || '服务器错误',
