@@ -46,7 +46,7 @@
         class="filter-item"
         type="primary"
         icon="el-icon-arrow-left"
-        @click='clearQuery'
+        @click="clearQuery"
       >
         清空
       </el-button>
@@ -230,24 +230,24 @@
 </template>
 
 <script>
-import waves from "@/directive/waves"; // waves directive
-import { parseTime } from "@/utils";
-import Pagination from "@/components/Pagination"; // secondary package based on el-pagination
-import { hkall, CommunityList } from "@/api/rkpc";
+import waves from '@/directive/waves' // waves directive
+import { parseTime } from '@/utils'
+import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import { hkall, CommunityList } from '@/api/rkpc'
 
 export default {
-  name: "ComplexTable",
+  name: 'ComplexTable',
   components: { Pagination },
   directives: { waves },
   filters: {
     statusFilter(status) {
       const statusMap = {
-        published: "success",
-        draft: "info",
-        deleted: "danger",
-      };
-      return statusMap[status];
-    },
+        published: 'success',
+        draft: 'info',
+        deleted: 'danger'
+      }
+      return statusMap[status]
+    }
   },
   data() {
     return {
@@ -261,114 +261,114 @@ export default {
         importance: undefined,
         title: undefined,
         type: undefined,
-        sort: "+id",
-        query: "",
+        sort: '+id',
+        query: ''
       },
       importanceOptions: [1, 2, 3],
 
       sortOptions: [
-        { label: "ID Ascending", key: "+id" },
-        { label: "ID Descending", key: "-id" },
+        { label: 'ID Ascending', key: '+id' },
+        { label: 'ID Descending', key: '-id' }
       ],
-      statusOptions: ["published", "draft", "deleted"],
+      statusOptions: ['published', 'draft', 'deleted'],
       showReviewer: false,
       temp: {
         id: undefined,
         importance: 1,
-        remark: "",
+        remark: '',
         timestamp: new Date(),
-        title: "",
-        type: "",
-        status: "published",
+        title: '',
+        type: '',
+        status: 'published'
       },
       dialogFormVisible: false,
-      dialogStatus: "",
+      dialogStatus: '',
       textMap: {
-        update: "Edit",
-        create: "Create",
+        update: 'Edit',
+        create: 'Create'
       },
       dialogPvVisible: false,
       pvData: [],
       rules: {
         type: [
-          { required: true, message: "type is required", trigger: "change" },
+          { required: true, message: 'type is required', trigger: 'change' }
         ],
         timestamp: [
           {
-            type: "date",
+            type: 'date',
             required: true,
-            message: "timestamp is required",
-            trigger: "change",
-          },
+            message: 'timestamp is required',
+            trigger: 'change'
+          }
         ],
         title: [
-          { required: true, message: "title is required", trigger: "blur" },
-        ],
+          { required: true, message: 'title is required', trigger: 'blur' }
+        ]
       },
-      downloadLoading: false,
-    };
+      downloadLoading: false
+    }
   },
   created() {
-    this.listQuery.pageIndex = 1;
-    this.listQuery.pageSize = 20;
-    this.listQuery.query = "";
-    this.getList();
-    this.getCommunityList();
-    this.communityListAllOptions = [];
-    this.communityListOptions = [];
+    this.listQuery.pageIndex = 1
+    this.listQuery.pageSize = 20
+    this.listQuery.query = ''
+    this.getList()
+    this.getCommunityList()
+    this.communityListAllOptions = []
+    this.communityListOptions = []
   },
   methods: {
-    clearQuery(){
-        this.listQuery.query=""
-        this.getList();
+    clearQuery() {
+      this.listQuery.query = ''
+      this.getList()
     },
     test(e) {
-      console.log(e);
+      console.log(e)
     },
     filterCommunityList(query) {
-      query = query.replace(/\s+/g, "");
-      if (query === "") return;
-      this.communityListOptions = [];
+      query = query.replace(/\s+/g, '')
+      if (query === '') return
+      this.communityListOptions = []
       this.communityListAllOptions.forEach((element) => {
         if (element.indexOf(query) > 0) {
-          this.communityListOptions.push(element);
+          this.communityListOptions.push(element)
         }
-      });
+      })
     },
     getCommunityList() {
-      this.listLoading = true;
+      this.listLoading = true
       CommunityList().then((response) => {
-        this.communityListAllOptions = response.data;
-        this.communityListOptions = response.data;
-        this.listLoading = false;
-      });
+        this.communityListAllOptions = response.data
+        this.communityListOptions = response.data
+        this.listLoading = false
+      })
     },
     getList() {
-      this.listLoading = true;
-      this.listQuery.pageIndex = this.listQuery.page;
-      this.listQuery.pageSize = this.listQuery.limit;
+      this.listLoading = true
+      this.listQuery.pageIndex = this.listQuery.page
+      this.listQuery.pageSize = this.listQuery.limit
       hkall(this.listQuery).then((response) => {
-        this.list = response.data.records;
-        this.total = response.data.total;
-        this.listLoading = false;
-      });
+        this.list = response.data.records
+        this.total = response.data.total
+        this.listLoading = false
+      })
     },
     handleFilter() {
-      this.listQuery.page = 1;
+      this.listQuery.page = 1
 
-      this.getList();
+      this.getList()
     },
     handleModifyStatus(row, status) {
       this.$message({
-        message: "操作Success",
-        type: "success",
-      });
-      row.status = status;
+        message: '操作Success',
+        type: 'success'
+      })
+      row.status = status
     },
     sortChange(data) {
-      const { prop, order } = data;
-      if (prop === "id") {
-        this.sortByID(order);
+      const { prop, order } = data
+      if (prop === 'id') {
+        this.sortByID(order)
       }
     },
     // sortByID(order) {
@@ -460,40 +460,40 @@ export default {
     //   });
     // },
     handleDownload() {
-      this.downloadLoading = true;
-      import("@/vendor/Export2Excel").then((excel) => {
-        const tHeader = ["timestamp", "title", "type", "importance", "status"];
+      this.downloadLoading = true
+      import('@/vendor/Export2Excel').then((excel) => {
+        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
         const filterVal = [
-          "timestamp",
-          "title",
-          "type",
-          "importance",
-          "status",
-        ];
-        const data = this.formatJson(filterVal);
+          'timestamp',
+          'title',
+          'type',
+          'importance',
+          'status'
+        ]
+        const data = this.formatJson(filterVal)
         excel.export_json_to_excel({
           header: tHeader,
           data,
-          filename: "table-list",
-        });
-        this.downloadLoading = false;
-      });
+          filename: 'table-list'
+        })
+        this.downloadLoading = false
+      })
     },
     formatJson(filterVal) {
       return this.list.map((v) =>
         filterVal.map((j) => {
-          if (j === "timestamp") {
-            return parseTime(v[j]);
+          if (j === 'timestamp') {
+            return parseTime(v[j])
           } else {
-            return v[j];
+            return v[j]
           }
         })
-      );
+      )
     },
-    getSortClass: function (key) {
-      const sort = this.listQuery.sort;
-      return sort === `+${key}` ? "ascending" : "descending";
-    },
-  },
-};
+    getSortClass: function(key) {
+      const sort = this.listQuery.sort
+      return sort === `+${key}` ? 'ascending' : 'descending'
+    }
+  }
+}
 </script>
