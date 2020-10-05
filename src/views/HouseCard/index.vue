@@ -230,24 +230,29 @@
 </template>
 
 <script>
-import waves from '@/directive/waves' // waves directive
-import { parseTime } from '@/utils'
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
-import { hkall, CommunityList } from '@/api/rkpc'
+import waves from "@/directive/waves"; // waves directive
+import { parseTime } from "@/utils";
+import Pagination from "@/components/Pagination"; // secondary package based on el-pagination
+import { hkall, CommunityList } from "@/api/rkpc";
+import { MessageBox, Message } from 'element-ui';
+import store from '@/store'
+import { getToken } from '@/utils/auth'
+import axios from 'axios'
+// import { ElSelect } from 'element-ui/types/select'
 
 export default {
-  name: 'ComplexTable',
+  name: "ComplexTable",
   components: { Pagination },
   directives: { waves },
   filters: {
     statusFilter(status) {
       const statusMap = {
-        published: 'success',
-        draft: 'info',
-        deleted: 'danger'
-      }
-      return statusMap[status]
-    }
+        published: "success",
+        draft: "info",
+        deleted: "danger",
+      };
+      return statusMap[status];
+    },
   },
   data() {
     return {
@@ -261,239 +266,200 @@ export default {
         importance: undefined,
         title: undefined,
         type: undefined,
-        sort: '+id',
-        query: ''
+        sort: "+id",
+        query: "",
       },
       importanceOptions: [1, 2, 3],
 
       sortOptions: [
-        { label: 'ID Ascending', key: '+id' },
-        { label: 'ID Descending', key: '-id' }
+        { label: "ID Ascending", key: "+id" },
+        { label: "ID Descending", key: "-id" },
       ],
-      statusOptions: ['published', 'draft', 'deleted'],
+      statusOptions: ["published", "draft", "deleted"],
       showReviewer: false,
       temp: {
         id: undefined,
         importance: 1,
-        remark: '',
+        remark: "",
         timestamp: new Date(),
-        title: '',
-        type: '',
-        status: 'published'
+        title: "",
+        type: "",
+        status: "published",
       },
       dialogFormVisible: false,
-      dialogStatus: '',
+      dialogStatus: "",
       textMap: {
-        update: 'Edit',
-        create: 'Create'
+        update: "Edit",
+        create: "Create",
       },
       dialogPvVisible: false,
       pvData: [],
       rules: {
         type: [
-          { required: true, message: 'type is required', trigger: 'change' }
+          { required: true, message: "type is required", trigger: "change" },
         ],
         timestamp: [
           {
-            type: 'date',
+            type: "date",
             required: true,
-            message: 'timestamp is required',
-            trigger: 'change'
-          }
+            message: "timestamp is required",
+            trigger: "change",
+          },
         ],
         title: [
-          { required: true, message: 'title is required', trigger: 'blur' }
-        ]
+          { required: true, message: "title is required", trigger: "blur" },
+        ],
       },
-      downloadLoading: false
-    }
+      downloadLoading: false,
+    };
   },
   created() {
-    this.listQuery.pageIndex = 1
-    this.listQuery.pageSize = 20
-    this.listQuery.query = ''
-    this.getList()
-    this.getCommunityList()
-    this.communityListAllOptions = []
-    this.communityListOptions = []
+    this.listQuery.pageIndex = 1;
+    this.listQuery.pageSize = 20;
+    this.listQuery.query = "";
+    this.getList();
+    this.getCommunityList();
+    this.communityListAllOptions = [];
+    this.communityListOptions = [];
   },
   methods: {
     clearQuery() {
-      this.listQuery.query = ''
-      this.getList()
+      this.listQuery.query = "";
+      this.getList();
     },
     test(e) {
-      console.log(e)
+      console.log(e);
     },
     filterCommunityList(query) {
-      query = query.replace(/\s+/g, '')
-      if (query === '') return
-      this.communityListOptions = []
+      query = query.replace(/\s+/g, "");
+      if (query === "") return;
+      this.communityListOptions = [];
       this.communityListAllOptions.forEach((element) => {
         if (element.indexOf(query) > 0) {
-          this.communityListOptions.push(element)
+          this.communityListOptions.push(element);
         }
-      })
+      });
     },
     getCommunityList() {
-      this.listLoading = true
+      this.listLoading = true;
       CommunityList().then((response) => {
-        this.communityListAllOptions = response.data
-        this.communityListOptions = response.data
-        this.listLoading = false
-      })
+        this.communityListAllOptions = response.data;
+        this.communityListOptions = response.data;
+        this.listLoading = false;
+      });
     },
     getList() {
-      this.listLoading = true
-      this.listQuery.pageIndex = this.listQuery.page
-      this.listQuery.pageSize = this.listQuery.limit
+      this.listLoading = true;
+      this.listQuery.pageIndex = this.listQuery.page;
+      this.listQuery.pageSize = this.listQuery.limit;
       hkall(this.listQuery).then((response) => {
-        this.list = response.data.records
-        this.total = response.data.total
-        this.listLoading = false
-      })
+        this.list = response.data.records;
+        this.total = response.data.total;
+        this.listLoading = false;
+      });
     },
     handleFilter() {
-      this.listQuery.page = 1
+      this.listQuery.page = 1;
 
-      this.getList()
+      this.getList();
     },
     handleModifyStatus(row, status) {
       this.$message({
-        message: '操作Success',
-        type: 'success'
-      })
-      row.status = status
+        message: "操作Success",
+        type: "success",
+      });
+      row.status = status;
     },
     sortChange(data) {
-      const { prop, order } = data
-      if (prop === 'id') {
-        this.sortByID(order)
+      const { prop, order } = data;
+      if (prop === "id") {
+        this.sortByID(order);
       }
     },
-    // sortByID(order) {
-    //   if (order === "ascending") {
-    //     this.listQuery.sort = "+id";
-    //   } else {
-    //     this.listQuery.sort = "-id";
-    //   }
-    //   this.handleFilter();
-    // },
-    // resetTemp() {
-    //   this.temp = {
-    //     id: undefined,
-    //     importance: 1,
-    //     remark: "",
-    //     timestamp: new Date(),
-    //     title: "",
-    //     status: "published",
-    //     type: "",
-    //   };
-    // },
-    // handleCreate() {
-    //   this.resetTemp();
-    //   this.dialogStatus = "create";
-    //   this.dialogFormVisible = true;
-    //   this.$nextTick(() => {
-    //     this.$refs["dataForm"].clearValidate();
-    //   });
-    // },
-    // createData() {
-    //   this.$refs["dataForm"].validate((valid) => {
-    //     if (valid) {
-    //       this.temp.id = parseInt(Math.random() * 100) + 1024; // mock a id
-    //       this.temp.author = "vue-element-admin";
-    //       createArticle(this.temp).then(() => {
-    //         this.list.unshift(this.temp);
-    //         this.dialogFormVisible = false;
-    //         this.$notify({
-    //           title: "Success",
-    //           message: "Created Successfully",
-    //           type: "success",
-    //           duration: 2000,
-    //         });
-    //       });
-    //     }
-    //   });
-    // },
-    // handleUpdate(row) {
-    //   this.temp = Object.assign({}, row); // copy obj
-    //   this.temp.timestamp = new Date(this.temp.timestamp);
-    //   this.dialogStatus = "update";
-    //   this.dialogFormVisible = true;
-    //   this.$nextTick(() => {
-    //     this.$refs["dataForm"].clearValidate();
-    //   });
-    // },
-    // updateData() {
-    //   this.$refs["dataForm"].validate((valid) => {
-    //     if (valid) {
-    //       const tempData = Object.assign({}, this.temp);
-    //       tempData.timestamp = +new Date(tempData.timestamp); // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-    //       updateArticle(tempData).then(() => {
-    //         const index = this.list.findIndex((v) => v.id === this.temp.id);
-    //         this.list.splice(index, 1, this.temp);
-    //         this.dialogFormVisible = false;
-    //         this.$notify({
-    //           title: "Success",
-    //           message: "Update Successfully",
-    //           type: "success",
-    //           duration: 2000,
-    //         });
-    //       });
-    //     }
-    //   });
-    // },
-    // handleDelete(row, index) {
-    //   this.$notify({
-    //     title: "Success",
-    //     message: "Delete Successfully",
-    //     type: "success",
-    //     duration: 2000,
-    //   });
-    //   this.list.splice(index, 1);
-    // },
-    // handleFetchPv(pv) {
-    //   fetchPv(pv).then((response) => {
-    //     this.pvData = response.data.pvData;
-    //     this.dialogPvVisible = true;
-    //   });
-    // },
+
     handleDownload() {
-      this.downloadLoading = true
-      import('@/vendor/Export2Excel').then((excel) => {
-        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-        const filterVal = [
-          'timestamp',
-          'title',
-          'type',
-          'importance',
-          'status'
-        ]
-        const data = this.formatJson(filterVal)
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: 'table-list'
+      this.downloadLoading = true;
+      let communityName = this.listQuery.query;
+      communityName = communityName.replace(/\s+/g, "");
+      if (communityName === "") {
+        MessageBox.confirm("您必须指定一个导出的小区", "错误", {
+          confirmButtonText: "确定",
+          type: "warning",
+        });
+        this.downloadLoading = false;
+        return;
+      }
+
+      let isFind = false;
+      let next = false;
+      console.log(communityName)
+      this.communityListAllOptions.forEach((element) => {
+        //console.log(communityName,element,communityName === element.replace(/\s+/g, ""))
+        isFind = (communityName === element.replace(/\s+/g, ""));
+        if (isFind) {
+          next = true;
+          return false;
+        }
+      });
+
+      if (!next) {
+        MessageBox.confirm("您必须选择一个有效的小区", "错误", {
+          confirmButtonText: "确定",
+          type: "warning",
+        });
+        this.downloadLoading = false;
+        return;
+      }
+      next=false
+      
+      //准备发起发起请求
+
+      let token =store.getters.token;
+    
+      axios.get(process.env.VUE_APP_BASE_API+"/hk/exportexcel", {
+          headers: {
+            token: token
+          },
+          method:'post',
+          responseType: "blob",
+          params:{token:token,community:communityName}
         })
-        this.downloadLoading = false
-      })
+        .then(res => {
+          console.log(res);
+          if (!res) return;
+          let blob = new Blob([res.data], {
+            type: "application/vnd.ms-excel;charset=utf-8"
+          });
+          let url = window.URL.createObjectURL(blob);
+          let aLink = document.createElement("a");
+          aLink.style.display = "none";
+          aLink.href = url;
+          aLink.setAttribute("download", communityName+".xls"); // 下载的文件
+          document.body.appendChild(aLink);
+          aLink.click();
+          document.body.removeChild(aLink);
+          window.URL.revokeObjectURL(url);
+        })
+        .catch(error => {
+          this.$message.error(error);
+        });
+      this.downloadLoading = false;
     },
     formatJson(filterVal) {
       return this.list.map((v) =>
         filterVal.map((j) => {
-          if (j === 'timestamp') {
-            return parseTime(v[j])
+          if (j === "timestamp") {
+            return parseTime(v[j]);
           } else {
-            return v[j]
+            return v[j];
           }
         })
-      )
+      );
     },
-    getSortClass: function(key) {
-      const sort = this.listQuery.sort
-      return sort === `+${key}` ? 'ascending' : 'descending'
-    }
-  }
-}
+    getSortClass: function (key) {
+      const sort = this.listQuery.sort;
+      return sort === `+${key}` ? "ascending" : "descending";
+    },
+  },
+};
 </script>
