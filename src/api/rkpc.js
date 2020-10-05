@@ -8,4 +8,10 @@ export function hkall(query) {
     })
 }
 
+export function CommunityList(){
+  return request({
+    url: '/hk/getcommunity',
+    method: 'post',
+  })
+}
  

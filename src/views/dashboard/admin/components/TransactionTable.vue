@@ -57,7 +57,7 @@
 </template>
 
 <script>
-import { transactionList } from "@/api/remote-search";
+
 import { initCommunityInfo } from "@/api/dashboard";
 export default {
   filters: {
@@ -100,43 +100,41 @@ export default {
     //       this.getList();
     //     }，
     changeSort(column, prop, order) {
-      
-      let  v = column.order||"descending";
+      let v = column.order || "descending";
       if (column.prop === "h") {
-        
         this.list.sort(function (a, b) {
-          if(v==="ascending"){
-              return a.h - b.h;
-          }else{
-              return b.h - a.h;
-          }    
+          if (v === "ascending") {
+            return a.h - b.h;
+          } else {
+            return b.h - a.h;
+          }
         });
       }
       if (column.prop === "p") {
         this.list.sort(function (a, b) {
-          if(v==="ascending"){
-              return a.p - b.p;
-          }else{
-              return b.p - a.p;
-          }    
+          if (v === "ascending") {
+            return a.p - b.p;
+          } else {
+            return b.p - a.p;
+          }
         });
       }
-       if (column.prop === "th") {
-          this.list.sort(function (a, b) {
-          if(v==="ascending"){
-              return a.th - b.th;
-          }else{
-              return b.th - a.th;
-          }    
+      if (column.prop === "th") {
+        this.list.sort(function (a, b) {
+          if (v === "ascending") {
+            return a.th - b.th;
+          } else {
+            return b.th - a.th;
+          }
         });
       }
-       if (column.prop === "tp") {
-          this.list.sort(function (a, b) {
-          if(v==="ascending"){
-              return a.tp - b.tp;
-          }else{
-              return b.tp - a.tp;
-          }    
+      if (column.prop === "tp") {
+        this.list.sort(function (a, b) {
+          if (v === "ascending") {
+            return a.tp - b.tp;
+          } else {
+            return b.tp - a.tp;
+          }
         });
       }
     },

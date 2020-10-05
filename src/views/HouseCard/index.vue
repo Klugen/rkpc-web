@@ -1,22 +1,37 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input
+      <!-- <el-input
         v-model="listQuery.query"
         placeholder="搜索内容"
         style="width: 200px"
         class="filter-item"
         @keyup.enter.native="handleFilter"
-      />
-      <!-- <el-select v-model="listQuery.importance" placeholder="Imp" clearable style="width: 90px" class="filter-item">
-        <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
+      /> -->
+      <!-- <el-select
+        v-model="listQuery.query"
+        :remote-method="filterCommunityList"
+        filterable
+        default-first-option
+        placeholder="选择社区"
+        @mousedown="test"
+      > -->
+      <el-select
+        v-model="listQuery.query"
+        :remote-method="filterCommunityList"
+        filterable
+        default-first-option
+        placeholder="选择社区"
+        @mousedown="test"
+      >
+        <el-option
+          v-for="(item, index) in communityListOptions"
+          :key="item + index"
+          :label="item"
+          :value="item"
+        />
       </el-select>
-      <el-select v-model="listQuery.type" placeholder="Type" clearable class="filter-item" style="width: 130px">
-        <el-option v-for="item in calendarTypeOptions" :key="item.key" :label="item.display_name+'('+item.key+')'" :value="item.key" />
-      </el-select>
-      <el-select v-model="listQuery.sort" style="width: 140px" class="filter-item" @change="handleFilter">
-        <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
-      </el-select> -->
+
       <el-button
         v-waves
         class="filter-item"
@@ -25,6 +40,15 @@
         @click="handleFilter"
       >
         搜索
+      </el-button>
+      <el-button
+        v-waves
+        class="filter-item"
+        type="primary"
+        icon="el-icon-arrow-left"
+        @click='clearQuery'
+      >
+        清空
       </el-button>
       <!-- <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         Add
@@ -162,7 +186,7 @@
             width="75px"
             align="center"
           >
-             <template slot-scope="{ row }">
+            <template slot-scope="{ row }">
               <span>{{ row.c11 }}</span>
             </template>
           </el-table-column>
@@ -170,28 +194,28 @@
       </el-table-column>
 
       <el-table-column label="出生人数" width="60px" align="center">
-         <template slot-scope="{ row }">
-              <span>{{ row.c12 }}</span>
-            </template>
+        <template slot-scope="{ row }">
+          <span>{{ row.c12 }}</span>
+        </template>
       </el-table-column>
       <el-table-column label="死亡人数" width="60px" align="center">
-          <template slot-scope="{ row }">
-              <span>{{ row.c13 }}</span>
-            </template>
+        <template slot-scope="{ row }">
+          <span>{{ row.c13 }}</span>
+        </template>
       </el-table-column>
       <el-table-column
         label="港澳台居民和外籍人员数"
         width="60px"
         align="center"
       >
-         <template slot-scope="{ row }">
-              <span>{{ row.c14 }}</span>
-            </template>
+        <template slot-scope="{ row }">
+          <span>{{ row.c14 }}</span>
+        </template>
       </el-table-column>
       <el-table-column label="联系方式" width="130px" align="center">
         <template slot-scope="{ row }">
-              <span>{{ row.cellPhone }}</span>
-            </template>
+          <span>{{ row.cellPhone }}</span>
+        </template>
       </el-table-column>
     </el-table>
 
@@ -206,23 +230,10 @@
 </template>
 
 <script>
- 
 import waves from "@/directive/waves"; // waves directive
 import { parseTime } from "@/utils";
 import Pagination from "@/components/Pagination"; // secondary package based on el-pagination
-import { hkall } from "@/api/rkpc";
-const calendarTypeOptions = [
-  { key: "CN", display_name: "China" },
-  { key: "US", display_name: "USA" },
-  { key: "JP", display_name: "Japan" },
-  { key: "EU", display_name: "Eurozone" },
-];
-
-// arr to obj, such as { CN : "China", US : "USA" }
-const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
-  acc[cur.key] = cur.display_name;
-  return acc;
-}, {});
+import { hkall, CommunityList } from "@/api/rkpc";
 
 export default {
   name: "ComplexTable",
@@ -236,9 +247,6 @@ export default {
         deleted: "danger",
       };
       return statusMap[status];
-    },
-    typeFilter(type) {
-      return calendarTypeKeyValue[type];
     },
   },
   data() {
@@ -254,10 +262,10 @@ export default {
         title: undefined,
         type: undefined,
         sort: "+id",
-        query:""
+        query: "",
       },
       importanceOptions: [1, 2, 3],
-      calendarTypeOptions,
+
       sortOptions: [
         { label: "ID Ascending", key: "+id" },
         { label: "ID Descending", key: "-id" },
@@ -301,16 +309,44 @@ export default {
     };
   },
   created() {
-    this.listQuery.pageIndex=1;
-    this.listQuery.pageSize=20;
+    this.listQuery.pageIndex = 1;
+    this.listQuery.pageSize = 20;
     this.listQuery.query = "";
     this.getList();
+    this.getCommunityList();
+    this.communityListAllOptions = [];
+    this.communityListOptions = [];
   },
   methods: {
+    clearQuery(){
+        this.listQuery.query=""
+        this.getList();
+    },
+    test(e) {
+      console.log(e);
+    },
+    filterCommunityList(query) {
+      query = query.replace(/\s+/g, "");
+      if (query === "") return;
+      this.communityListOptions = [];
+      this.communityListAllOptions.forEach((element) => {
+        if (element.indexOf(query) > 0) {
+          this.communityListOptions.push(element);
+        }
+      });
+    },
+    getCommunityList() {
+      this.listLoading = true;
+      CommunityList().then((response) => {
+        this.communityListAllOptions = response.data;
+        this.communityListOptions = response.data;
+        this.listLoading = false;
+      });
+    },
     getList() {
       this.listLoading = true;
-      this.listQuery.pageIndex = this.listQuery.page
-      this.listQuery.pageSize = this.listQuery.limit
+      this.listQuery.pageIndex = this.listQuery.page;
+      this.listQuery.pageSize = this.listQuery.limit;
       hkall(this.listQuery).then((response) => {
         this.list = response.data.records;
         this.total = response.data.total;
@@ -319,7 +355,7 @@ export default {
     },
     handleFilter() {
       this.listQuery.page = 1;
-     
+
       this.getList();
     },
     handleModifyStatus(row, status) {
@@ -423,26 +459,26 @@ export default {
     //     this.dialogPvVisible = true;
     //   });
     // },
-    // handleDownload() {
-    //   this.downloadLoading = true;
-    //   import("@/vendor/Export2Excel").then((excel) => {
-    //     const tHeader = ["timestamp", "title", "type", "importance", "status"];
-    //     const filterVal = [
-    //       "timestamp",
-    //       "title",
-    //       "type",
-    //       "importance",
-    //       "status",
-    //     ];
-    //     const data = this.formatJson(filterVal);
-    //     excel.export_json_to_excel({
-    //       header: tHeader,
-    //       data,
-    //       filename: "table-list",
-    //     });
-    //     this.downloadLoading = false;
-    //   });
-    // },
+    handleDownload() {
+      this.downloadLoading = true;
+      import("@/vendor/Export2Excel").then((excel) => {
+        const tHeader = ["timestamp", "title", "type", "importance", "status"];
+        const filterVal = [
+          "timestamp",
+          "title",
+          "type",
+          "importance",
+          "status",
+        ];
+        const data = this.formatJson(filterVal);
+        excel.export_json_to_excel({
+          header: tHeader,
+          data,
+          filename: "table-list",
+        });
+        this.downloadLoading = false;
+      });
+    },
     formatJson(filterVal) {
       return this.list.map((v) =>
         filterVal.map((j) => {
