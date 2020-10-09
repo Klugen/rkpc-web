@@ -10,7 +10,7 @@ export function login(data) {
 }
 
 export function getInfo(token) {
-  console.log(token)
+  // console.log(token)
   return request({
     url: '/user/info',
     method: 'get',
@@ -19,7 +19,7 @@ export function getInfo(token) {
 }
 
 export function logout(token) {
-  console.log(token)
+  // console.log(token)
   return request({
     url: '/user/logout',
     method: 'post',

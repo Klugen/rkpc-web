@@ -59,13 +59,13 @@
 <script>
 // import GithubCorner from '@/components/GithubCorner'
 import PanelGroup from './components/PanelGroup'
-import LineChart from './components/LineChart'
-import RaddarChart from './components/RaddarChart'
-import PieChart from './components/PieChart'
+// import LineChart from './components/LineChart'
+// import RaddarChart from './components/RaddarChart'
+// import PieChart from './components/PieChart'
 import BarChart from './components/BarChart'
 import TransactionTable from './components/TransactionTable'
-import TodoList from './components/TodoList'
-import BoxCard from './components/BoxCard'
+// import TodoList from './components/TodoList'
+// import BoxCard from './components/BoxCard'
 
 const lineChartData = {
   newVisitis: {
@@ -91,13 +91,13 @@ export default {
   components: {
     // GithubCorner,
     PanelGroup,
-    //LineChart,
-    //RaddarChart,
-    //PieChart,
-    BarChart,
+    // LineChart,
+    // RaddarChart,
+    // PieChart,
+    // BarChart,
     TransactionTable
-    //TodoList,
-    //BoxCard
+    // TodoList,
+    // BoxCard
   },
   data() {
     return {
@@ -105,7 +105,7 @@ export default {
     }
   },
   created() {
-    console.log('Dashboard/admin/created', 'XXXXX')
+    // console.log('Dashboard/admin/created', 'XXXXX')
   },
   methods: {
     handleSetLineChartData(type) {

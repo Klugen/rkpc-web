@@ -270,7 +270,8 @@ export default {
         query: ''
       },
       importanceOptions: [1, 2, 3],
-
+      communityListAllOptions: [],
+      communityListOptions: [],
       sortOptions: [
         { label: 'ID Ascending', key: '+id' },
         { label: 'ID Descending', key: '-id' }
@@ -317,10 +318,10 @@ export default {
     this.listQuery.pageIndex = 1
     this.listQuery.pageSize = 20
     this.listQuery.query = ''
-    this.getList()
-    this.getCommunityList()
     this.communityListAllOptions = []
     this.communityListOptions = []
+    this.getList()
+    this.getCommunityList()
   },
   methods: {
     clearQuery() {
@@ -328,7 +329,7 @@ export default {
       this.getList()
     },
     test(e) {
-      console.log(e)
+      // console.log(e)
     },
     filterCommunityList(query) {
       query = query.replace(/\s+/g, '')
@@ -343,6 +344,7 @@ export default {
     getCommunityList() {
       this.listLoading = true
       CommunityList().then((response) => {
+        console.log('初始化社区列表', response)
         this.communityListAllOptions = response.data
         this.communityListOptions = response.data
         this.listLoading = false
@@ -392,7 +394,7 @@ export default {
 
       let isFind = false
       let next = false
-      console.log(communityName)
+      // console.log(communityName)
       this.communityListAllOptions.forEach((element) => {
         // console.log(communityName,element,communityName === element.replace(/\s+/g, ""))
         isFind = (communityName === element.replace(/\s+/g, ''))
@@ -425,7 +427,7 @@ export default {
         params: { token: token, community: communityName }
       })
         .then(res => {
-          console.log(res)
+          // console.log(res)
           if (!res) return
           const blob = new Blob([res.data], {
             type: 'application/vnd.ms-excel;charset=utf-8'

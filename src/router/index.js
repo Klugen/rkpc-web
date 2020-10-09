@@ -7,10 +7,10 @@ Vue.use(Router)
 import Layout from '@/layout'
 
 /* Router Modules */
-import componentsRouter from './modules/components'
-import chartsRouter from './modules/charts'
-import tableRouter from './modules/table'
-import nestedRouter from './modules/nested'
+// import componentsRouter from './modules/components'
+// import chartsRouter from './modules/charts'
+// import tableRouter from './modules/table'
+// import nestedRouter from './modules/nested'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -148,7 +148,6 @@ export const asyncRoutes = [
     path: '/HouseCard',
     component: Layout,
     redirect: '/HouseCard',
-    // alwaysShow: true, // will always show the root menu
     name: 'HouseCard',
     children: [
       {
@@ -158,7 +157,7 @@ export const asyncRoutes = [
         meta: {
           title: '户卡信息',
           icon: 'clipboard',
-          roles: ['admin']
+          roles: ['admin', 'community_admin']
         }
       }
     ]
