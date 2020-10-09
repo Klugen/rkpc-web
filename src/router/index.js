@@ -157,7 +157,7 @@ export const asyncRoutes = [
         meta: {
           title: '户卡信息',
           icon: 'clipboard',
-          roles: ['admin', 'community_admin']
+          roles: ['admin', 'community_admin', 'street_admin']
         }
       }
     ]
