@@ -43,6 +43,7 @@ service.interceptors.response.use(
    */
   response => {
     const res = response.data
+    console.log('tag', res)
     if (res.code !== 0 && res.code !== 20000) {
       Message({
         message: res.message || '服务器错误',

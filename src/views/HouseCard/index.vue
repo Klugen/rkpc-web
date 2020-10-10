@@ -93,6 +93,7 @@
       <el-table-column label="地址" width="100px" align="center">
         <template slot-scope="{ row }">
           <span>{{ row.addr }}</span>
+          <el-tag @click="onTagClick(row.persons)">家庭成员</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="户主姓名" width="100px" align="center">
@@ -226,6 +227,16 @@
       :limit.sync="listQuery.limit"
       @pagination="getList"
     />
+    <el-dialog v-el-drag-dialog title="家庭成员" :visible.sync="showHomeMember" @dragDialog="handleDrag">
+      <el-table :data="homeMember">
+        <el-table-column label="关系" property="relationship" />
+        <el-table-column label="姓名" property="name" />
+        <el-table-column label="性别" property="sex" width="75" />
+        <el-table-column label="年龄" property="age" width="75" />
+        <el-table-column label="健康状况" property="health" />
+        <el-table-column label="联系电话" property="cellPhone" />
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 
@@ -236,14 +247,14 @@ import Pagination from '@/components/Pagination' // secondary package based on e
 import { hkall, CommunityList } from '@/api/rkpc'
 import { MessageBox } from 'element-ui'
 import store from '@/store'
-
+import elDragDialog from '@/directive/el-drag-dialog'
 import axios from 'axios'
 // import { ElSelect } from 'element-ui/types/select'
 
 export default {
   name: 'ComplexTable',
   components: { Pagination },
-  directives: { waves },
+  directives: { waves, elDragDialog },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -311,7 +322,9 @@ export default {
           { required: true, message: 'title is required', trigger: 'blur' }
         ]
       },
-      downloadLoading: false
+      downloadLoading: false,
+      homeMember: [],
+      showHomeMember: false
     }
   },
   created() {
@@ -324,6 +337,15 @@ export default {
     this.getCommunityList()
   },
   methods: {
+    onTagClick(e) {
+      console.log('tag', '标题被点击，准备执行')
+      console.log('tag', e)
+      this.showHomeMember = true
+      this.homeMember = e
+    }, 
+    handleDrag(e) {
+
+    },
     clearQuery() {
       this.listQuery.query = ''
       this.getList()
