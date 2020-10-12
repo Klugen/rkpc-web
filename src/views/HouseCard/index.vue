@@ -93,7 +93,7 @@
       <el-table-column label="地址" width="100px" align="center">
         <template slot-scope="{ row }">
           <span>{{ row.addr }}</span>
-          <el-tag @click="onTagClick(row.persons)">家庭成员</el-tag>
+          <el-tag style="cursor:hand" @click="onTagClick(row.persons)">家庭成员</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="户主姓名" width="100px" align="center">
@@ -227,12 +227,13 @@
       :limit.sync="listQuery.limit"
       @pagination="getList"
     />
-    <el-dialog v-el-drag-dialog title="家庭成员" :visible.sync="showHomeMember" @dragDialog="handleDrag">
+    <el-dialog v-el-drag-dialog title="家庭成员" :visible.sync="showHomeMember" custom-class="customWidth" @dragDialog="handleDrag">
       <el-table :data="homeMember">
-        <el-table-column label="关系" property="relationship" />
-        <el-table-column label="姓名" property="name" />
+        <el-table-column label="关系" property="relationship" width="75" />
+        <el-table-column label="姓名" property="name" width="75" />
         <el-table-column label="性别" property="sex" width="75" />
         <el-table-column label="年龄" property="age" width="75" />
+        <el-table-column label="身份证" property="idCardNumber" width="180" />
         <el-table-column label="健康状况" property="health" />
         <el-table-column label="联系电话" property="cellPhone" />
       </el-table>
@@ -342,7 +343,7 @@ export default {
       console.log('tag', e)
       this.showHomeMember = true
       this.homeMember = e
-    }, 
+    },
     handleDrag(e) {
 
     },
@@ -487,3 +488,8 @@ export default {
   }
 }
 </script>
+<style>
+ .customWidth {
+   width:800px;
+ }
+</style>
