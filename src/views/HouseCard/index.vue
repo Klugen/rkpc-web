@@ -63,6 +63,17 @@
       >
         导出
       </el-button>
+
+      <el-button
+        v-waves
+        :loading="downloadLoading"
+        class="filter-item"
+        type="primary"
+        icon="el-icon-download"
+        @click="handleDownloadPerson"
+      >
+        导出人员情况
+      </el-button>
       <!-- <el-checkbox v-model="showReviewer" class="filter-item" style="margin-left:15px;" @change="tableKey=tableKey+1">
         reviewer
       </el-checkbox> -->
@@ -401,7 +412,70 @@ export default {
         this.sortByID(order)
       }
     },
+    handleDownloadPerson() {
+      this.downloadLoading = true
+      let communityName = this.listQuery.query
+      communityName = communityName.replace(/\s+/g, '')
+      if (communityName === '') {
+        MessageBox.confirm('您必须指定一个导出的小区', '错误', {
+          confirmButtonText: '确定',
+          type: 'warning'
+        })
+        this.downloadLoading = false
+        return
+      }
+      let isFind = false
+      let next = false
+      // console.log(communityName)
+      this.communityListAllOptions.forEach((element) => {
+        // console.log(communityName,element,communityName === element.replace(/\s+/g, ""))
+        isFind = (communityName === element.replace(/\s+/g, ''))
+        if (isFind) {
+          next = true
+          return false
+        }
+      })
 
+      if (!next) {
+        MessageBox.confirm('您必须选择一个有效的小区', '错误', {
+          confirmButtonText: '确定',
+          type: 'warning'
+        })
+        this.downloadLoading = false
+        return
+      }
+      next = false
+      const token = store.getters.token
+
+      axios.get(process.env.VUE_APP_BASE_API + '/hk/exportpersonexccel', {
+        headers: {
+          token: token
+        },
+        method: 'post',
+        responseType: 'blob',
+        params: { token: token, community: communityName }
+      })
+        .then(res => {
+          // console.log(res)
+          if (!res) return
+          const blob = new Blob([res.data], {
+            type: 'application/vnd.ms-excel;charset=utf-8'
+          })
+          const url = window.URL.createObjectURL(blob)
+          const aLink = document.createElement('a')
+          aLink.style.display = 'none'
+          aLink.href = url
+          aLink.setAttribute('download', communityName + '人口信息.xls') // 下载的文件
+          document.body.appendChild(aLink)
+          aLink.click()
+          document.body.removeChild(aLink)
+          window.URL.revokeObjectURL(url)
+        })
+        .catch(error => {
+          this.$message.error(error)
+        })
+      this.downloadLoading = false
+    },
     handleDownload() {
       this.downloadLoading = true
       let communityName = this.listQuery.query
