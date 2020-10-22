@@ -59,7 +59,7 @@
         class="filter-item"
         type="primary"
         icon="el-icon-download"
-        @click="handleDownload"
+        @click="ExportHK"
       >
         导出
       </el-button>
@@ -70,10 +70,22 @@
         class="filter-item"
         type="primary"
         icon="el-icon-download"
-        @click="handleDownloadPerson"
+        @click="ExportPerson"
       >
         导出人员情况
       </el-button>
+
+      <!-- <el-button
+        v-waves
+        :loading="downloadLoading"
+        class="filter-item"
+        type="primary"
+        icon="el-icon-download"
+        data-field="AAAAAAAAAAAa"
+        @click="exportTest"
+      >
+        带日期的导出
+      </el-button> -->
       <!-- <el-checkbox v-model="showReviewer" class="filter-item" style="margin-left:15px;" @change="tableKey=tableKey+1">
         reviewer
       </el-checkbox> -->
@@ -104,7 +116,10 @@
       <el-table-column label="地址" width="100px" align="center">
         <template slot-scope="{ row }">
           <span>{{ row.addr }}</span>
-          <el-tag style="cursor:hand" @click="onTagClick(row.persons)">家庭成员</el-tag>
+          <el-tag
+            style="cursor: hand"
+            @click="onTagClick(row.persons)"
+          >家庭成员</el-tag>
         </template>
       </el-table-column>
       <el-table-column label="户主姓名" width="100px" align="center">
@@ -238,7 +253,13 @@
       :limit.sync="listQuery.limit"
       @pagination="getList"
     />
-    <el-dialog v-el-drag-dialog title="家庭成员" :visible.sync="showHomeMember" custom-class="customWidth" @dragDialog="handleDrag">
+    <el-dialog
+      v-el-drag-dialog
+      title="家庭成员"
+      :visible.sync="showHomeMember"
+      custom-class="customWidth"
+      @dragDialog="handleDrag"
+    >
       <el-table :data="homeMember">
         <el-table-column label="关系" property="relationship" width="75" />
         <el-table-column label="姓名" property="name" width="75" />
@@ -248,6 +269,26 @@
         <el-table-column label="健康状况" property="health" />
         <el-table-column label="联系电话" property="cellPhone" />
       </el-table>
+    </el-dialog>
+
+    <el-dialog
+      v-el-drag-dialog
+      title="导出日期选择"
+      :visible.sync="showExportDateSelect"
+    >
+      <el-form>
+        <el-form-item label="请选择导出日期">
+          <el-date-picker
+            v-model="temp.date"
+            type="date"
+            placeholder="不选择，则导出全部"
+          />
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="showExportDateSelect = false">取消</el-button>
+        <el-button type="primary" @click="beginExport">开始导出</el-button>
+      </div>
     </el-dialog>
   </div>
 </template>
@@ -336,7 +377,8 @@ export default {
       },
       downloadLoading: false,
       homeMember: [],
-      showHomeMember: false
+      showHomeMember: false,
+      showExportDateSelect: false
     }
   },
   created() {
@@ -349,6 +391,52 @@ export default {
     this.getCommunityList()
   },
   methods: {
+
+    ExportHK(e) {
+      let communityName = this.listQuery.query
+      communityName = communityName.replace(/\s+/g, '')
+      if (communityName === '') {
+        MessageBox.confirm('您必须指定一个导出的小区', '错误', {
+          confirmButtonText: '确定',
+          type: 'warning'
+        })
+        return
+      }
+      this.exportSet = 'HK'
+      this.showExportDateSelect = true
+    },
+
+    ExportPerson(e) {
+      let communityName = this.listQuery.query
+      communityName = communityName.replace(/\s+/g, '')
+      if (communityName === '') {
+        MessageBox.confirm('您必须指定一个导出的小区', '错误', {
+          confirmButtonText: '确定',
+          type: 'warning'
+        })
+        return
+      }
+      this.exportSet = 'Person'
+      this.showExportDateSelect = true
+    },
+
+    beginExport(e) {
+      this.showExportDateSelect = false
+      if (this.temp.date) {
+        const m = new Date(this.temp.date)
+        const s = m.getFullYear() + '-' + ((m.getMonth() + 1 >= 10) ? (m.getMonth() + 1) : '0' + (m.getMonth() + 1)) + '-' +
+      ((m.getDate() >= 10) ? m.getDate() : '0' + m.getDate())
+        this.selectExprtDate = s
+      } else {
+        this.selectExprtDate = ''
+      }
+      if (this.exportSet === 'Person') {
+        this.handleDownloadPerson()
+      } else if (this.exportSet === 'HK') {
+        this.handleDownload()
+      }
+    },
+
     onTagClick(e) {
       console.log('tag', '标题被点击，准备执行')
       console.log('tag', e)
@@ -453,7 +541,7 @@ export default {
         },
         method: 'post',
         responseType: 'blob',
-        params: { token: token, community: communityName }
+        params: { token: token, community: communityName, selectdate: this.selectExprtDate }
       })
         .then(res => {
           // console.log(res)
@@ -521,7 +609,7 @@ export default {
         },
         method: 'post',
         responseType: 'blob',
-        params: { token: token, community: communityName }
+        params: { token: token, community: communityName, selectdate: this.selectExprtDate }
       })
         .then(res => {
           // console.log(res)
@@ -563,7 +651,7 @@ export default {
 }
 </script>
 <style>
- .customWidth {
-   width:800px;
- }
+.customWidth {
+  width: 800px;
+}
 </style>
