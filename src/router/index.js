@@ -162,6 +162,57 @@ export const asyncRoutes = [
       }
     ]
   },
+
+  {
+    path: '/transData',
+    component: Layout,
+    redirect: '/transData',
+    name: 'transData',
+    meta: {
+      title: '微信数据审核',
+      icon: 'el-icon-s-help'
+    },
+    children: [
+      {
+        path: 'ne',
+        component: () => import('@/views/wx-examine/need-examine'),
+        name: 'needexamine',
+        meta: {
+          title: '待审核',
+          icon: 'clipboard',
+          roles: ['admin', 'community_admin', 'street_admin']
+        }
+      },
+      {
+        path: 'nne',
+        component: () => import('@/views/wx-examine/not-need-examine'),
+        name: 'notneedexamine',
+        meta: {
+          title: '已审核',
+          icon: 'clipboard',
+          roles: ['admin', 'community_admin', 'street_admin']
+        }
+      }
+    ]
+  },
+  {
+    path: '/HK',
+    component: Layout,
+    redirect: '/HK',
+    name: 'HK',
+    children: [
+      {
+        path: 'role',
+        component: () => import('@/views/HouseCard/index'),
+        name: 'HK',
+        meta: {
+          title: '户卡底册',
+          icon: 'clipboard',
+          roles: ['admin', 'community_admin', 'street_admin']
+        }
+      }
+    ]
+  },
   // {
   //   path: '/permission',
   //   component: Layout,
