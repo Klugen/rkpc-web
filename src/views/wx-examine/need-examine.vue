@@ -1,96 +1,127 @@
 <template>
   <div class="app-container">
-    <el-table v-loading="listLoading" :data="list" border fit highlight-current-row style="width: 100%">
-      <el-table-column align="center" label="ID" width="80">
-        <template slot-scope="{row}">
-          <span>{{ row.id }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column width="180px" align="center" label="Date">
-        <template slot-scope="{row}">
-          <span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column width="120px" align="center" label="Author">
-        <template slot-scope="{row}">
-          <span>{{ row.author }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column width="100px" label="Importance">
-        <template slot-scope="{row}">
-          <svg-icon v-for="n in + row.importance" :key="n" icon-class="star" class="meta-item__icon" />
-        </template>
-      </el-table-column>
-
-      <el-table-column class-name="status-col" label="Status" width="110">
-        <template slot-scope="{row}">
-          <el-tag :type="row.status | statusFilter">
-            {{ row.status }}
-          </el-tag>
-        </template>
-      </el-table-column>
-
-      <el-table-column min-width="300px" label="Title">
-        <template slot-scope="{row}">
-          <template v-if="row.edit">
-            <el-input v-model="row.title" class="edit-input" size="small" />
-            <el-button
-              class="cancel-btn"
-              size="small"
-              icon="el-icon-refresh"
-              type="warning"
-              @click="cancelEdit(row)"
-            >
-              cancel
-            </el-button>
-          </template>
-          <span v-else>{{ row.title }}</span>
-        </template>
-      </el-table-column>
-
-      <el-table-column align="center" label="Actions" width="120">
-        <template slot-scope="{row}">
-          <el-button
-            v-if="row.edit"
-            type="success"
-            size="small"
-            icon="el-icon-circle-check-outline"
-            @click="confirmEdit(row)"
+    <el-table
+      v-loading="listLoading"
+      :data="list"
+      border
+      fit
+      highlight-current-row
+      style="width: 100%"
+    >
+      <el-table-column align="center" label="小区名称" width="240px">
+        <template slot-scope="{ row }">
+          <span
+            >{{ row.community_name }} {{ row.building_number }}栋
+            {{ row.unit_number }}单元 {{ row.room_number }}号</span
           >
-            Ok
-          </el-button>
+        </template>
+      </el-table-column>
+
+      <el-table-column width="140px" align="center" label="家庭关系">
+        <template slot-scope="{ row }">
+          <span>{{ row.family_relation }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column width="120px" align="center" label="姓名">
+        <template slot-scope="{ row }">
+          <span>{{ row.name }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column width="80px" align="center" label="性别">
+        <template slot-scope="{ row }">
+          <span>{{ row.gender }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column width="80px" align="center" label="年龄">
+        <template slot-scope="{ row }">
+          <span>{{ row.age }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column width="140px" align="center" label="联系电话">
+        <template slot-scope="{ row }">
+          <span>{{ row.cellphone }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column width="140px" align="center" label="健康状况">
+        <template slot-scope="{ row }">
+          <span>{{ row.health_condition }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column width="180px" align="center" label="身份证号码">
+        <template slot-scope="{ row }">
+          <span>{{ row.id_card_number }}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column width="80px" align="center" label="是否居住">
+        <template slot-scope="{ row }">
+          <span
+            ><i
+              v-if="row.is_live_here"
+              class="el-icon-success"
+              style="font-size: 20px; color: green" />
+            <i v-else class="el-icon-error" style="font-size: 20px; color: red"
+          /></span>
+        </template>
+      </el-table-column>
+
+      <el-table-column width="120px" align="center" label="是否户口注册地">
+        <template slot-scope="{ row }">
+          <span
+            ><i
+              v-if="row.is_house_hold_here"
+              class="el-icon-success"
+              style="font-size: 20px; color: green" />
+            <i v-else class="el-icon-error" style="font-size: 20px; color: red"
+          /></span>
+        </template>
+      </el-table-column>
+
+      <el-table-column align="center" label="操作" width="120">
+        <template slot-scope="{ row }">
           <el-button
-            v-else
             type="primary"
             size="small"
             icon="el-icon-edit"
-            @click="row.edit=!row.edit"
+            @click="doExamine(row)"
           >
-            Edit
+            审核
           </el-button>
         </template>
       </el-table-column>
     </el-table>
+    <pagination
+      v-show="total > 0"
+      :total="total"
+      :page.sync="listQuery.page"
+      :limit.sync="listQuery.limit"
+      @pagination="getList"
+    />
   </div>
 </template>
 
 <script>
-import { fetchList } from '@/api/article'
+import Pagination from "@/components/Pagination";
+import { getNeedExamineList,ExaminePerson } from "@/api/rkpc";
 
 export default {
-  name: 'InlineEditTable',
+  name: "InlineEditTable",
+  components: { Pagination },
   filters: {
     statusFilter(status) {
       const statusMap = {
-        published: 'success',
-        draft: 'info',
-        deleted: 'danger'
-      }
-      return statusMap[status]
-    }
+        published: "success",
+        draft: "info",
+        deleted: "danger",
+      };
+      return statusMap[status];
+    },
   },
   data() {
     return {
@@ -98,43 +129,43 @@ export default {
       listLoading: true,
       listQuery: {
         page: 1,
-        limit: 10
-      }
-    }
+        limit: 10,
+      },
+      total: 100,
+    };
   },
   created() {
-    this.getList()
+    this.getList();
   },
   methods: {
     async getList() {
-      this.listLoading = true
-      const { data } = await fetchList(this.listQuery)
-      const items = data.items
-      this.list = items.map(v => {
-        this.$set(v, 'edit', false) // https://vuejs.org/v2/guide/reactivity.html
-        v.originalTitle = v.title //  will be used when user click the cancel botton
-        return v
-      })
-      this.listLoading = false
+      this.listLoading = true;
+      const { data } = await getNeedExamineList(
+        this.listQuery.page,
+        this.listQuery.limit
+      );
+      this.list = data.records;
+      this.total = data.recordCount;
+      //   this.list = items.map(v => {
+      //     this.$set(v, 'edit', false) // https://vuejs.org/v2/guide/reactivity.html
+      //   //  v.originalTitle = v.title //  will be used when user click the cancel botton
+      //     return v
+      //   })
+      this.listLoading = false;
     },
-    cancelEdit(row) {
-      row.title = row.originalTitle
-      row.edit = false
-      this.$message({
-        message: 'The title has been restored to the original value',
-        type: 'warning'
-      })
+    doExamine(row) {
+      var id = row.person_id;
+
+      ExaminePerson(id).then((response) => {
+        this.$message({
+          message: "审核成功",
+          type: "success",
+        });
+        this.getList();
+      });
     },
-    confirmEdit(row) {
-      row.edit = false
-      row.originalTitle = row.title
-      this.$message({
-        message: 'The title has been edited',
-        type: 'success'
-      })
-    }
-  }
-}
+  },
+};
 </script>
 
 <style scoped>

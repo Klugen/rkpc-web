@@ -477,6 +477,7 @@ export default {
       this.listQuery.pageIndex = this.listQuery.page
       this.listQuery.pageSize = this.listQuery.limit
       hkall(this.listQuery).then((response) => {
+        console.log(response.data.records)
         this.list = response.data.records
         this.total = response.data.total
         this.listLoading = false

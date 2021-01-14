@@ -14,3 +14,27 @@ export function CommunityList() {
     method: 'post'
   })
 }
+
+
+export function getNeedExamineList(pageIndex, pageSize) {
+  return request({
+    url: '/hk/transData/' + pageIndex + '/' + pageSize,
+    method: 'post'
+  })
+}
+
+export function getNotNeedExamineList(pageIndex, pageSize) {
+  return request({
+    url: '/hk/transDataForNotNeedExamine/' + pageIndex + '/' + pageSize,
+    method: 'post'
+  })
+}
+
+export function ExaminePerson(RowId) {
+  console.log(RowId)
+  return request({
+    url: '/hk/examine/',
+    method: 'post',
+    params: {personId:RowId}
+  })
+}
