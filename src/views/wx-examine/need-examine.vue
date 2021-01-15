@@ -17,6 +17,19 @@
         </template>
       </el-table-column>
 
+      <el-table-column width="100px" align="center" label="是否已存档">
+        <template slot-scope="{ row }">
+           <span
+            ><i
+              v-if="row.docment_person_id"
+              class="el-icon-success"
+              style="font-size: 20px; color: green" @click="showDocument(row)" />
+            <i v-else class="el-icon-error" style="font-size: 20px; color: red"   
+          /></span>
+
+        </template>
+      </el-table-column>
+
       <el-table-column width="140px" align="center" label="家庭关系">
         <template slot-scope="{ row }">
           <span>{{ row.family_relation }}</span>
@@ -108,7 +121,7 @@
 
 <script>
 import Pagination from "@/components/Pagination";
-import { getNeedExamineList,ExaminePerson } from "@/api/rkpc";
+import { getNeedExamineList, ExaminePerson } from "@/api/rkpc";
 
 export default {
   name: "InlineEditTable",
@@ -163,6 +176,9 @@ export default {
         });
         this.getList();
       });
+    },
+    showDocument(row){
+       console.log("AAA")
     },
   },
 };
