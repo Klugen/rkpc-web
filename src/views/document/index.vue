@@ -430,6 +430,7 @@ export default {
           { required: true, message: "title is required", trigger: "blur" },
         ],
       },
+      lastHouse:{},
       downloadLoading: false,
     };
   },
@@ -493,15 +494,15 @@ export default {
       this.temp = {
         personId: null,
         houseId: null,
-        communityName: "",
-        buildingNumber: "",
-        unitNumber: "",
-        roomNumber: "",
+        communityName: this.lastHouse.communityName,
+        buildingNumber: this.lastHouse.buildingNumber,
+        unitNumber:this.lastHouse.unitNumber,
+        roomNumber:this.lastHouse.roomNumber,
         householdRelation: null,
         name: "",
         idCardNumber: "",
         cellphone: "",
-        householdRelation: null,
+        healthCondition: 1,
         isLiveHere: true,
         isHouseHoldHere: true,
       };
@@ -517,6 +518,11 @@ export default {
     createData() {
       this.$refs["dataForm"].validate((valid) => {
         if (valid) {
+          this.lastHouse.communityName = this.temp.communityName;
+          this.lastHouse.buildingNumber = this.temp.buildingNumber;
+          this.lastHouse.unitNumber = this.temp.unitNumber;
+          this.lastHouse.roomNumber = this.temp.roomNumber;
+
           createDocument(this.temp).then(() => {
             this.dialogFormVisible = false;
             this.$notify({
@@ -582,6 +588,7 @@ export default {
       this.temp.isHouseHoldHere = row.is_house_hold_here;
     },
     handleUpdate(row) {
+      this.resetTemp();
       this.tempObjPropCopy(row);
       this.dialogStatus = "update";
       this.dialogFormVisible = true;
