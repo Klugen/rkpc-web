@@ -8,7 +8,7 @@
       highlight-current-row
       style="width: 100%"
     >
-      <el-table-column align="center" label="小区名称" width="240px">
+      <el-table-column align="center" label="小区名称" min-width="240px">
         <template slot-scope="{ row }">
           <span
             >{{ row.community_name }} {{ row.building_number }}栋

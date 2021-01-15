@@ -31,10 +31,56 @@ export function getNotNeedExamineList(pageIndex, pageSize) {
 }
 
 export function ExaminePerson(RowId) {
-  console.log(RowId)
+   
   return request({
     url: '/hk/examine/',
     method: 'post',
     params: {personId:RowId}
+  })
+}
+
+export function documentList(pageIndex,pageSize,queryParam){
+  return request({
+    url: '/hk/documentdata/' + pageIndex + '/' + pageSize,
+    method: 'post',
+    params : queryParam
+  })
+}
+
+export function householdRelationList(){
+  return request({
+    url: '/hk/householdRelation/',
+    method: 'post'
+  })
+}
+
+export function healthList(){
+  return request({
+    url: '/hk/health/',
+    method: 'post'
+  })
+}
+
+export function updateDocument(tempData){
+  return request({
+    url: '/hk/updatedocument/',
+    method: 'post',
+    params : tempData
+  })
+}
+
+export function createDocument(tempData){
+  return request({
+    url: '/hk/createdocument/',
+    method: 'post',
+    params : tempData
+  })
+}
+
+export function deleteDocument(tempData){
+  return request({
+    url: '/hk/deletedocument/',
+    method: 'post',
+    params : tempData
   })
 }

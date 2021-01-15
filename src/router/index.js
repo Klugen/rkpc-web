@@ -177,9 +177,9 @@ export const asyncRoutes = [
     name: 'HK',
     children: [
       {
-        path: 'role',
+        path: 'doc',
         component: () => import('@/views/document/index'),
-        name: 'HK',
+        name: 'docmain',
         meta: {
           title: '户卡底册',
           icon: 'clipboard',
@@ -190,25 +190,25 @@ export const asyncRoutes = [
   },
  
 
-  {
-    path: '/icon',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/icons/index'),
-        name: 'Icons',
-        meta: { title: 'Icons', icon: 'icon', noCache: true }
-      }
-    ]
-  },
+  // {
+  //   path: '/icon',
+  //   component: Layout,
+  //   children: [
+  //     {
+  //       path: 'index',
+  //       component: () => import('@/views/icons/index'),
+  //       name: 'Icons',
+  //       meta: { title: 'Icons', icon: 'icon', noCache: true }
+  //     }
+  //   ]
+  // },
 
-  /** when your routing map is too long, you can split it into small modules **/
-  // componentsRouter,
-  // chartsRouter,
-  // nestedRouter,
-  //tableRouter,
-  tableRouter,
+  // /** when your routing map is too long, you can split it into small modules **/
+  // // componentsRouter,
+  // // chartsRouter,
+  // // nestedRouter,
+  // //tableRouter,
+  // tableRouter,
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]
