@@ -17,7 +17,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column width="100px" align="center" label="是否已存档">
+      <el-table-column width="70px" align="center" label="已登记">
         <template slot-scope="{ row }">
            <span
             ><i
