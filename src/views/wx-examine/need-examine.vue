@@ -23,8 +23,8 @@
             ><i
               v-if="row.docment_person_id"
               class="el-icon-success"
-              style="font-size: 20px; color: green" @click="showDocument(row)" />
-            <i v-else class="el-icon-error" style="font-size: 20px; color: red"   
+              style="font-size: 20px; color: #ff7744" @click="showDocument(row)" />
+            <i v-else class="el-icon-error" style="font-size: 20px; color: #0066ff"   
           /></span>
 
         </template>
