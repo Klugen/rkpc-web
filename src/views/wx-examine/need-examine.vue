@@ -19,14 +19,17 @@
 
       <el-table-column width="70px" align="center" label="已登记">
         <template slot-scope="{ row }">
-           <span
+          <span
             ><i
               v-if="row.docment_person_id"
               class="el-icon-success"
-              style="font-size: 20px; color: #ff7744" @click="showDocument(row)" />
-            <i v-else class="el-icon-error" style="font-size: 20px; color: #0066ff"   
+              style="font-size: 20px; color: #ff7744; cursor: pointer"
+              @click="showDocument(row)" />
+            <i
+              v-else
+              class="el-icon-error"
+              style="font-size: 20px; color: #0066ff"
           /></span>
-
         </template>
       </el-table-column>
 
@@ -96,15 +99,18 @@
         </template>
       </el-table-column>
 
-      <el-table-column align="center" label="操作" width="120">
+      <el-table-column align="center" label="操作" width="150">
         <template slot-scope="{ row }">
-          <el-button
-            type="primary"
-            size="small"
-            icon="el-icon-edit"
-            @click="doExamine(row)"
-          >
+          <el-button type="primary" size="mini" @click="doExamine(row)">
             审核
+          </el-button>
+          <el-button
+            v-if="row.status != 'deleted'"
+            size="mini"
+            type="danger"
+            @click="cancelExamine(row)"
+          >
+            放弃
           </el-button>
         </template>
       </el-table-column>
@@ -116,12 +122,43 @@
       :limit.sync="listQuery.limit"
       @pagination="getList"
     />
+
+    <el-dialog
+      v-el-drag-dialog
+      title="底层数据"
+      :visible.sync="showDocumentData"
+      width="960"
+      @dragDialog="handleDrag"
+    >
+      <el-table :data="homeMember">
+        <el-table-column label="地址" width="240">
+          <template slot-scope="{ row }">
+            <span
+              >{{ row.community_name }} {{ row.building_number }}栋
+              {{ row.unit_number }}单元 {{ row.room_number }}号</span
+            >
+          </template>
+        </el-table-column>
+        <el-table-column label="关系" property="family_relation" width="75" />
+        <el-table-column label="姓名" property="name" width="75" />
+        <el-table-column label="性别" property="gender" width="75" />
+        <el-table-column label="年龄" property="age" width="75" />
+        <el-table-column label="身份证" property="id_card_number" width="180" />
+        <el-table-column label="健康状况" property="health_condition" width="100" />
+        <el-table-column label="联系电话" property="cellphone" width="120" />
+      </el-table>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import Pagination from "@/components/Pagination";
-import { getNeedExamineList, ExaminePerson } from "@/api/rkpc";
+import {
+  getNeedExamineList,
+  ExaminePerson,
+  CancelExaminePerson,
+  GetDocumentPerson,
+} from "@/api/rkpc";
 
 export default {
   name: "InlineEditTable",
@@ -138,6 +175,7 @@ export default {
   },
   data() {
     return {
+      showDocumentData: false,
       list: null,
       listLoading: true,
       listQuery: {
@@ -177,9 +215,25 @@ export default {
         this.getList();
       });
     },
-    showDocument(row){
-       console.log("AAA")
+    cancelExamine(row) {
+      var id = row.person_id;
+      CancelExaminePerson(id).then((response) => {
+        this.$message({
+          message: "操作成功",
+          type: "success",
+        });
+        this.getList();
+      });
     },
+    showDocument(row) {
+      var id = row.docment_person_id;
+      GetDocumentPerson(id).then((response) => {
+        this.homeMember = response.data;
+        console.log(this.homeMember);
+        this.showDocumentData = true;
+      });
+    },
+    handleDrag(e) {},
   },
 };
 </script>

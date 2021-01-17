@@ -39,6 +39,14 @@ export function ExaminePerson(RowId) {
   })
 }
 
+export function CancelExaminePerson(RowId){
+  return request({
+    url: '/hk/cancelexamine/',
+    method: 'post',
+    params: {personId:RowId}
+  })
+}
+
 export function documentList(pageIndex,pageSize,queryParam){
   return request({
     url: '/hk/documentdata/' + pageIndex + '/' + pageSize,
@@ -82,5 +90,13 @@ export function deleteDocument(tempData){
     url: '/hk/deletedocument/',
     method: 'post',
     params : tempData
+  })
+}
+
+export function GetDocumentPerson(personId){
+  return request({
+    url: '/hk/getdocpersonbyid/',
+    method: 'post',
+    params: {personId:personId}
   })
 }
