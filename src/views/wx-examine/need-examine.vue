@@ -1,13 +1,48 @@
 <template>
   <div class="app-container">
+    <div class="filter-container">
+      <el-button
+        v-waves
+        class="filter-item"
+        type="primary"
+        icon="el-icon-check"
+        @click="doBatchExamine"
+      >
+        批量审核
+      </el-button>
+      <el-button
+        class="filter-item"
+        style="margin-left: 10px"
+        type="danger"
+        icon="el-icon-close"
+        @click="doBatchCancelExamine"
+      >
+        批量放弃
+      </el-button>
+    </div>
+
     <el-table
       v-loading="listLoading"
       :data="list"
+      ref="isSelect"
       border
       fit
       highlight-current-row
       style="width: 100%"
+      @selection-change="selectionChange"
     >
+      <!-- <el-table-column label="选择" align="center" width="100">
+        <template slot="header">
+          <el-checkbox @change="handleAllChange">选择 </el-checkbox>
+        </template>
+        <template slot-scope="{row}">
+          <el-checkbox v-model="row.isSelect" @change="tableCheckboxChange(row)"></el-checkbox>
+          <span>{{row.isSelect}}</span>
+        </template>
+      </el-table-column> -->
+      <el-table-column type="selection" align="center" width="100">
+      </el-table-column>
+
       <el-table-column align="center" label="小区名称" min-width="240px">
         <template slot-scope="{ row }">
           <span
@@ -144,7 +179,11 @@
         <el-table-column label="性别" property="gender" width="75" />
         <el-table-column label="年龄" property="age" width="75" />
         <el-table-column label="身份证" property="id_card_number" width="180" />
-        <el-table-column label="健康状况" property="health_condition" width="100" />
+        <el-table-column
+          label="健康状况"
+          property="health_condition"
+          width="100"
+        />
         <el-table-column label="联系电话" property="cellphone" width="120" />
       </el-table>
     </el-dialog>
@@ -153,16 +192,22 @@
 
 <script>
 import Pagination from "@/components/Pagination";
+
+import waves from "@/directive/waves"; // waves directive
 import {
   getNeedExamineList,
   ExaminePerson,
   CancelExaminePerson,
   GetDocumentPerson,
+  BatchExaminePerson,
+  BatchCancelExaminePerson,
 } from "@/api/rkpc";
+import { array } from 'jszip/lib/support';
 
 export default {
   name: "InlineEditTable",
   components: { Pagination },
+  directives: { waves },
   filters: {
     statusFilter(status) {
       const statusMap = {
@@ -176,8 +221,10 @@ export default {
   data() {
     return {
       showDocumentData: false,
+      homeMember: null,
       list: null,
       listLoading: true,
+      selectedList: [],
       listQuery: {
         page: 1,
         limit: 10,
@@ -197,11 +244,15 @@ export default {
       );
       this.list = data.records;
       this.total = data.recordCount;
+      this.list.forEach((v, i) => {
+        v.isSelect = false;
+      });
       //   this.list = items.map(v => {
       //     this.$set(v, 'edit', false) // https://vuejs.org/v2/guide/reactivity.html
       //   //  v.originalTitle = v.title //  will be used when user click the cancel botton
       //     return v
       //   })
+      this.selectedList = []; //清空已选择列表
       this.listLoading = false;
     },
     doExamine(row) {
@@ -234,6 +285,54 @@ export default {
       });
     },
     handleDrag(e) {},
+    tableCheckboxChange(row) {
+      row.isSelect = !row.isSelect;
+      console.log(row);
+    },
+    handleAllChange(e) {
+      this.list.forEach((v, i) => {
+        v.isSelect = e;
+      });
+    },
+    doBatchExamine() {
+      let personIds = new Array();
+      this.listLoading = true;
+      this.selectedList.forEach((v, i) => {
+        var id = v.person_id;
+        personIds.push(id);
+      });
+   
+      BatchExaminePerson(JSON.stringify(personIds)).then((response) => {
+        this.$message({
+          message: "操作成功",
+          type: "success",
+        });
+        this.listLoading = false;
+        this.getList();
+      });
+    },
+    doBatchCancelExamine() {
+      let personIds = [];
+      this.listLoading = true;
+      this.selectedList.forEach((v, i) => {
+        var id = v.person_id;
+        personIds.push(id);
+      });
+      
+ 
+
+      BatchCancelExaminePerson(JSON.stringify(personIds)).then((response) => {
+        this.$message({
+          message: "操作成功",
+          type: "success",
+        });
+        this.listLoading = false;
+        this.getList();
+      });
+    },
+    selectionChange(e, i) {
+      this.selectedList = e;
+    },
   },
 };
 </script>

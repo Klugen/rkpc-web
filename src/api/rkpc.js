@@ -31,7 +31,6 @@ export function getNotNeedExamineList(pageIndex, pageSize) {
 }
 
 export function ExaminePerson(RowId) {
-   
   return request({
     url: '/hk/examine/',
     method: 'post',
@@ -44,6 +43,22 @@ export function CancelExaminePerson(RowId){
     url: '/hk/cancelexamine/',
     method: 'post',
     params: {personId:RowId}
+  })
+}
+//Batch
+export function BatchExaminePerson(RowIds) {
+  return request({
+    url: '/hk/batchexamine/',
+    method: 'post',
+    params:  {personIds:RowIds}
+  })
+}
+
+export function BatchCancelExaminePerson(RowIds){
+  return request({
+    url: '/hk/batchcancelexamine/',
+    method: 'post',
+    params:  {personIds:RowIds}
   })
 }
 
