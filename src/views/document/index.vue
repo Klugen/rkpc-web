@@ -58,6 +58,14 @@
         clearable
         @keyup.enter.native="handleFilter"
       />
+      <el-input
+        v-model="listQuery.registered_residence_other"
+        placeholder="户口登记地"
+        style="width: 240px"
+        class="filter-item"
+        clearable
+        @keyup.enter.native="handleFilter"
+      />
       <!-- <el-select v-model="listQuery.importance" placeholder="Imp" clearable style="width: 90px" class="filter-item">
         <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
       </el-select>
@@ -148,11 +156,11 @@
         </template>
       </el-table-column>
 
-      <el-table-column width="140px" align="center" label="健康状况">
+      <!-- <el-table-column width="140px" align="center" label="健康状况">
         <template slot-scope="{ row }">
           <span>{{ row.health_condition }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
 
       <el-table-column width="180px" align="center" label="身份证号码">
         <template slot-scope="{ row }">
@@ -172,7 +180,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column width="120px" align="center" label="是否户口注册地">
+      <el-table-column width="120px" align="center" label="户口在本户">
         <template slot-scope="{ row }">
           <span
             ><i
@@ -181,6 +189,12 @@
               style="font-size: 20px; color: green" />
             <i v-else class="el-icon-error" style="font-size: 20px; color: red"
           /></span>
+        </template>
+      </el-table-column>
+
+      <el-table-column width="180px" align="center" label="户口登记地">
+        <template slot-scope="{ row }">
+          <span>{{ row.registered_residence_other }}</span>
         </template>
       </el-table-column>
 
@@ -318,6 +332,11 @@
         <el-form-item label="户口在本户" prop="isHouseHoldHere">
           <el-checkbox v-model="temp.isHouseHoldHere" />
         </el-form-item>
+
+          <el-form-item label="户口所在地" prop="roomNumber">
+          <el-input v-model="temp.registeredResidenceOther" style="width: 180px" />
+        </el-form-item>
+
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false"> 取消 </el-button>
@@ -430,7 +449,7 @@ export default {
           { required: true, message: "title is required", trigger: "blur" },
         ],
       },
-      lastHouse:{},
+      lastHouse: {},
       downloadLoading: false,
     };
   },
@@ -496,8 +515,8 @@ export default {
         houseId: null,
         communityName: this.lastHouse.communityName,
         buildingNumber: this.lastHouse.buildingNumber,
-        unitNumber:this.lastHouse.unitNumber,
-        roomNumber:this.lastHouse.roomNumber,
+        unitNumber: this.lastHouse.unitNumber,
+        roomNumber: this.lastHouse.roomNumber,
         householdRelation: null,
         name: "",
         idCardNumber: "",
@@ -505,6 +524,7 @@ export default {
         healthCondition: 1,
         isLiveHere: true,
         isHouseHoldHere: true,
+        registeredResidenceOther:"",
       };
     },
     handleCreate() {
@@ -586,6 +606,7 @@ export default {
       this.temp.healthCondition = row.health_condition_code;
       this.temp.isLiveHere = row.is_live_here;
       this.temp.isHouseHoldHere = row.is_house_hold_here;
+      this.temp.registeredResidenceOther = row.registered_residence_other;
     },
     handleUpdate(row) {
       this.resetTemp();

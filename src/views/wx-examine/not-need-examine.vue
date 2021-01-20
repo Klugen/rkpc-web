@@ -47,11 +47,11 @@
         </template>
       </el-table-column>
 
-      <el-table-column width="140px" align="center" label="健康状况">
+      <!-- <el-table-column width="140px" align="center" label="健康状况">
         <template slot-scope="{ row }">
           <span>{{ row.health_condition }}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
 
       <el-table-column width="180px" align="center" label="身份证号码">
         <template slot-scope="{ row }">
@@ -82,7 +82,11 @@
           /></span>
         </template>
       </el-table-column>
-
+     <el-table-column width="180px" align="center" label="户口登记地">
+        <template slot-scope="{ row }">
+          <span>{{ row.registered_residence_other }}</span>
+        </template>
+      </el-table-column>
        
     </el-table>
     <pagination
