@@ -175,7 +175,10 @@
               v-if="row.is_live_here"
               class="el-icon-success"
               style="font-size: 20px; color: green" />
-            <i v-else class="el-icon-error" style="font-size: 20px; color: red"
+            <i 
+               v-else   
+               class="el-icon-error" 
+               style="font-size: 20px; color: red"
           /></span>
         </template>
       </el-table-column>
@@ -205,15 +208,12 @@
         class-name="small-padding fixed-width"
       >
         <template slot-scope="{ row, $index }">
+          <el-button type="default" size="mini" @click="handleFile(row)">
+            证件
+          </el-button>
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
             编辑
           </el-button>
-          <!-- <el-button v-if="row.status!='published'" size="mini" type="success" @click="handleModifyStatus(row,'published')">
-            Publish
-          </el-button>
-          <el-button v-if="row.status!='draft'" size="mini" @click="handleModifyStatus(row,'draft')">
-            Draft
-          </el-button> -->
           <el-button
             v-if="row.status != 'deleted'"
             size="mini"
@@ -333,10 +333,11 @@
           <el-checkbox v-model="temp.isHouseHoldHere" />
         </el-form-item>
 
-          <el-form-item label="户口所在地" prop="roomNumber">
-          <el-input v-model="temp.registeredResidenceOther" style="width: 180px" />
+        <el-form-item label="户口所在地" prop="roomNumber">
+          <el-input
+            v-model="temp.registeredResidenceOther"
+            style="width: 180px"/>
         </el-form-item>
-
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false"> 取消 </el-button>
@@ -348,9 +349,33 @@
         </el-button>
       </div>
     </el-dialog>
+
+    <el-dialog title="证件" :visible.sync="dialogFileVisible">
+      <el-row>
+        <el-col :span="24">
+          <el-col :span="12">    
+            <UploadImg CardType="Front" CardTypeName="身份证正面" :PersonId="currPersonId"/> 
+          </el-col>
+          <el-col  :span="12">
+            <UploadImg CardType="Back" CardTypeName="身份证背面" :PersonId="currPersonId"/> 
+          </el-col>
+        </el-col>
+      </el-row>
+       <el-row>
+         户口本：
+        <el-col :span="24">
+          <el-col :span="12">
+            <UploadImg CardType="HomePageHomePage" CardTypeName="户口本首页" :PersonId="currPersonId"/> 
+          </el-col>
+          <el-col :span="12">
+            <UploadImg CardType="PersonPageHomePage" CardTypeName="户口本本人页" :PersonId="currPersonId"/> 
+          </el-col>
+        </el-col>
+      </el-row>
+    </el-dialog>
   </div>
 </template>
-
+ 
 <script>
 import {
   fetchList,
@@ -361,6 +386,7 @@ import {
 import waves from "@/directive/waves"; // waves directive
 import { parseTime } from "@/utils";
 import Pagination from "@/components/Pagination"; // secondary package based on el-pagination
+import UploadImg from "./comp/upload";
 import {
   documentList,
   CommunityList,
@@ -386,7 +412,7 @@ const calendarTypeKeyValue = calendarTypeOptions.reduce((acc, cur) => {
 
 export default {
   name: "ComplexTable",
-  components: { Pagination },
+  components: { Pagination,UploadImg },
   directives: { waves },
   filters: {
     statusFilter(status) {
@@ -428,8 +454,8 @@ export default {
       dialogFormVisible: false,
       dialogStatus: "",
       textMap: {
-        update: "Edit",
-        create: "Create",
+        update: "修改",
+        create: "创建",
       },
       dialogPvVisible: false,
       pvData: [],
@@ -451,6 +477,8 @@ export default {
       },
       lastHouse: {},
       downloadLoading: false,
+      dialogFileVisible: false,
+      currPersonId:"",
     };
   },
   created() {
@@ -524,7 +552,7 @@ export default {
         healthCondition: 1,
         isLiveHere: true,
         isHouseHoldHere: true,
-        registeredResidenceOther:"",
+        registeredResidenceOther: "",
       };
     },
     handleCreate() {
@@ -652,6 +680,11 @@ export default {
     getSortClass: function (key) {
       const sort = this.listQuery.sort;
       return sort === `+${key}` ? "ascending" : "descending";
+    },
+    handleFile: function (row) {
+      console.log(row);
+      this.currPersonId = row.person_id;
+      this.dialogFileVisible = true;
     },
   },
 };
