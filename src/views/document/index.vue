@@ -84,6 +84,16 @@
       >
         搜索
       </el-button>
+       <el-button
+        :loading="downloadLoading"
+        v-waves
+        class="filter-item"
+        type="primary"
+        icon="el-icon-download"
+        @click="handleExport"
+      >
+        导出
+      </el-button>
       <el-button
         class="filter-item"
         style="margin-left: 10px"
@@ -354,10 +364,10 @@
       <el-row>
         <el-col :span="24">
           <el-col :span="12">    
-            <UploadImg CardType="Front" CardTypeName="身份证正面" :PersonId="currPersonId"/> 
+            <UploadImg CardType="Front" CardTypeName="身份证正面" :PersonId="currPersonId" :ImgUrl="temp.idCardFrontImg"/> 
           </el-col>
           <el-col  :span="12">
-            <UploadImg CardType="Back" CardTypeName="身份证背面" :PersonId="currPersonId"/> 
+            <UploadImg CardType="Back" CardTypeName="身份证背面" :PersonId="currPersonId" :ImgUrl="temp.idCardBackImg"/> 
           </el-col>
         </el-col>
       </el-row>
@@ -365,10 +375,10 @@
          户口本：
         <el-col :span="24">
           <el-col :span="12">
-            <UploadImg CardType="HomePageHomePage" CardTypeName="户口本首页" :PersonId="currPersonId"/> 
+            <UploadImg CardType="HomePageHomePage" CardTypeName="户口本首页" :PersonId="currPersonId" :ImgUrl="temp.permanentResidenceBookletMainPage"/> 
           </el-col>
           <el-col :span="12">
-            <UploadImg CardType="PersonPageHomePage" CardTypeName="户口本本人页" :PersonId="currPersonId"/> 
+            <UploadImg CardType="PersonPageHomePage" CardTypeName="户口本本人页" :PersonId="currPersonId" :ImgUrl="temp.permanentResidenceBookletPersonPage"/> 
           </el-col>
         </el-col>
       </el-row>
@@ -396,6 +406,8 @@ import {
   createDocument,
   deleteDocument,
 } from "@/api/rkpc";
+import axios from 'axios';
+import store from '@/store';
 
 const calendarTypeOptions = [
   { key: "CN", display_name: "China" },
@@ -431,7 +443,7 @@ export default {
     return {
       communityListAllOptions: [],
       communityListOptions: [],
-
+     
       tableKey: 0,
       list: null,
       total: 0,
@@ -553,6 +565,10 @@ export default {
         isLiveHere: true,
         isHouseHoldHere: true,
         registeredResidenceOther: "",
+        idCardFrontImg :"",
+        idCardBackImg:"",
+        permanentResidenceBookletMainPage:"",
+        permanentResidenceBookletPersonPage:"",
       };
     },
     handleCreate() {
@@ -635,6 +651,10 @@ export default {
       this.temp.isLiveHere = row.is_live_here;
       this.temp.isHouseHoldHere = row.is_house_hold_here;
       this.temp.registeredResidenceOther = row.registered_residence_other;
+      this.temp.idCardFrontImg =row.id_card_front_img ;
+      this.temp.idCardBackImg=row.id_card_back_img;
+      this.temp.permanentResidenceBookletMainPage=row.permanent_residence_booklet_main_page;
+      this.temp.permanentResidenceBookletPersonPage =row.permanent_residence_booklet_person_page ;
     },
     handleUpdate(row) {
       this.resetTemp();
@@ -682,9 +702,46 @@ export default {
       return sort === `+${key}` ? "ascending" : "descending";
     },
     handleFile: function (row) {
-      console.log(row);
+      
+      this.resetTemp();
+      this.tempObjPropCopy(row);
       this.currPersonId = row.person_id;
       this.dialogFileVisible = true;
+    },
+    handleExport:function(){
+      this.downloadLoading = true
+      const token = store.getters.token
+      axios.get(process.env.VUE_APP_BASE_API + '/hk/exportdocumentexcel', {
+        headers: {
+          'X-Token': token
+        },
+        method: 'post',
+        responseType: 'blob',
+        params:this.listQuery
+      })
+        .then(res => {
+           this.downloadLoading = false  
+          // console.log(res)
+          if (!res) return
+          const blob = new Blob([res.data], {
+            type: 'application/vnd.ms-excel;charset=utf-8'
+          })
+          const url = window.URL.createObjectURL(blob)
+          const aLink = document.createElement('a')
+          aLink.style.display = 'none'
+          aLink.href = url
+          aLink.setAttribute('download', '人口数据.xls') // 下载的文件
+          document.body.appendChild(aLink)
+          aLink.click()
+          document.body.removeChild(aLink)
+          window.URL.revokeObjectURL(url)
+        })
+        .catch(error => {
+           this.downloadLoading = false  
+          this.$message.error(error)
+        })
+     
+      
     },
   },
 };

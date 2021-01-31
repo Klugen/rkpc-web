@@ -1,6 +1,7 @@
 <template>
   <div>
     <el-upload
+      v-if="!ImgUrl"
       accept="image/jpeg,image/gif,image/png,image/jpg"
       :data="dataObj"
       :multiple="false"
@@ -12,34 +13,52 @@
       :title="CardTypeName"
     >
       <i class="el-icon-upload" />
-      <div class="el-upload__text"><em>{{CardTypeName}}</em>图片文件拖到此处，或<em>点击上传</em></div>
-      
+      <div class="el-upload__text">
+        <em>{{ CardTypeName }}</em
+        >图片文件拖到此处，或<em>点击上传</em>
+      </div>
     </el-upload>
+
+    <el-image
+      v-else
+      :src="ImgUrl"
+      style="width: 100%; height: 600px"
+      fit="scale-down"
+    ></el-image>
   </div>
 </template>
 
  <script>
-import store from '@/store'
+import store from "@/store";
 export default {
   name: "SingleImageUpload",
   props: {
     CardType: {
       type: String,
-      default: 'chart'
+      default: "",
     },
-    CardTypeName:{
-       type: String,
-       default: 'chart'
+    CardTypeName: {
+      type: String,
+      default: "",
     },
-    PersonId:{
-       type: String,
-       default: 'chart'
-    }
+    PersonId: {
+      type: String,
+      default: "",
+    },
+    ImgUrl: {
+      type: String,
+      default: "",
+    },
   },
   data() {
     return {
       tempUrl: "",
-      dataObj: { token:  store.getters.token, key: "",cardType:this.CardType,personId:this.PersonId },
+      dataObj: {
+        token: store.getters.token,
+        key: "",
+        cardType: this.CardType,
+        personId: this.PersonId,
+      },
     };
   },
   computed: {
@@ -54,27 +73,16 @@ export default {
     emitInput(val) {
       this.$emit("input", val);
     },
-    handleImageSuccess() {
-      this.emitInput(this.tempUrl);
+    handleImageSuccess(response,file,filelist) {
+      console.log("图片上传成功回调");
+      console.log(response);
+      console.log(file);
+      console.log(filelist);
+      //this.emitInput(this.tempUrl);
     },
     beforeUpload() {
       const _self = this;
-      const token = store.getters.token
-      // return new Promise((resolve, reject) => {
-      //   getToken()
-      //     .then((response) => {
-      //       const key = response.data.qiniu_key;
-      //       const token = response.data.qiniu_token;
-      //       _self._data.dataObj.token = token;
-      //       _self._data.dataObj.key = key;
-      //       this.tempUrl = response.data.qiniu_url;
-      //       resolve(true);
-      //     })
-      //     .catch((err) => {
-      //       console.log(err);
-      //       reject(false);
-      //     });
-      // });
+      const token = store.getters.token;
     },
   },
 };
